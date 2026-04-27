@@ -47,8 +47,8 @@ export const MODES: Mode[] = [
     id: "social_media",
     label: "Social Media",
     icon: "📱",
-    placeholder: "Paste any content, idea, or topic — we'll turn it into posts for LinkedIn, Instagram, and X/Twitter...",
-    description: "Get ready-to-post content for LinkedIn, Instagram, and X/Twitter",
+    placeholder: "Paste any content, idea, or topic and we'll turn it into platform-ready posts...",
+    description: "Generate ready-to-post content for any social media platform",
   },
   {
     id: "invoice_proposal",
@@ -86,6 +86,26 @@ export const MODES: Mode[] = [
     description: "Write your own instruction — Clarity AI follows it exactly",
     proOnly: true,
   },
+];
+
+export type Platform = {
+  id: string;
+  label: string;
+  icon: string;
+  proOnly?: boolean;
+  hint: string;
+};
+
+export const PLATFORMS: Platform[] = [
+  { id: "linkedin", label: "LinkedIn", icon: "💼", hint: "Professional, 150-200 words, ends with a question or CTA" },
+  { id: "instagram", label: "Instagram", icon: "📸", hint: "Engaging, 50-80 words + 5 hashtags" },
+  { id: "twitter", label: "X / Twitter", icon: "🐦", hint: "Punchy, under 280 characters" },
+  { id: "facebook", label: "Facebook", icon: "👥", proOnly: true, hint: "Conversational, 40-80 words, encourages comments" },
+  { id: "tiktok", label: "TikTok", icon: "🎵", proOnly: true, hint: "Hook in first line, casual, 3-5 hashtags" },
+  { id: "pinterest", label: "Pinterest", icon: "📌", proOnly: true, hint: "Descriptive, keyword-rich, 100-150 words" },
+  { id: "youtube", label: "YouTube", icon: "▶️", proOnly: true, hint: "Video description, 150-200 words + timestamps placeholder" },
+  { id: "threads", label: "Threads", icon: "🧵", proOnly: true, hint: "Casual and conversational, 150-300 characters" },
+  { id: "newsletter", label: "Newsletter", icon: "📧", proOnly: true, hint: "Intro paragraph, warm and personal, 80-120 words" },
 ];
 
 export const TONES = [

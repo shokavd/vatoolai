@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { MODES, TONES, LANGUAGES } from "./tool/modes";
+import { MODES, TONES, LANGUAGES, PLATFORMS } from "./tool/modes";
 import { getHistory, saveToHistory, clearHistory, formatTimeAgo, type HistoryItem } from "./tool/history";
 
 const FREE_LIMIT = 3;
@@ -107,6 +107,7 @@ export default function ClarityTool() {
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [generateVariations, setGenerateVariations] = useState(false);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(["linkedin"]);
 
   useEffect(() => {
     setUsageCount(getUsageCount());
@@ -143,6 +144,7 @@ export default function ClarityTool() {
           customInstruction: customInstruction.trim(),
           variations: generateVariations,
           isPro: proUser,
+          platforms: selectedMode.id === "social_media" ? selectedPlatforms : undefined,
         }),
       });
 
@@ -263,6 +265,71 @@ export default function ClarityTool() {
           rows={3}
           className="w-full rounded-xl border border-indigo-200 bg-indigo-50 p-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none mb-3"
         />
+      )}
+
+      {/* Platform selector — social media mode only */}
+      {selectedMode.id === "social_media" && (
+        <div className="mb-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-sm font-medium text-gray-700">
+              Choose platforms
+              {!proUser && <span className="ml-2 text-xs text-gray-400">(free: pick 1 · <button onClick={handleCheckout} className="text-indigo-500 underline hover:no-underline">Pro for all</button>)</span>}
+            </p>
+            {proUser && (
+              <button
+                onClick={() => setSelectedPlatforms(PLATFORMS.map(p => p.id))}
+                className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+              >
+                Select all
+              </button>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {PLATFORMS.map((platform) => {
+              const isSelected = selectedPlatforms.includes(platform.id);
+              const isLocked = platform.proOnly && !proUser;
+              const isDisabled = !proUser && !isSelected && selectedPlatforms.length >= 1;
+
+              return (
+                <button
+                  key={platform.id}
+                  title={isLocked ? "Pro only" : platform.hint}
+                  disabled={isLocked || isDisabled}
+                  onClick={() => {
+                    if (isLocked || isDisabled) return;
+                    if (!proUser) {
+                      setSelectedPlatforms([platform.id]);
+                      return;
+                    }
+                    setSelectedPlatforms(prev =>
+                      prev.includes(platform.id)
+                        ? prev.filter(p => p !== platform.id)
+                        : [...prev, platform.id]
+                    );
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                    isLocked
+                      ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                      : isDisabled
+                      ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
+                      : isSelected
+                      ? "bg-indigo-600 text-white border-indigo-600"
+                      : "bg-white text-gray-600 border-gray-200 hover:border-indigo-300"
+                  }`}
+                >
+                  <span>{platform.icon}</span>
+                  <span>{platform.label}</span>
+                  {isLocked && <span className="text-xs bg-indigo-100 text-indigo-500 px-1 rounded">Pro</span>}
+                </button>
+              );
+            })}
+          </div>
+          {!proUser && (
+            <p className="text-xs text-gray-400 mt-2">
+              Upgrade to Pro to generate for multiple platforms at once + unlock Facebook, TikTok, Pinterest, YouTube, Threads & Newsletter
+            </p>
+          )}
+        </div>
       )}
 
       {/* Tone + Language selectors */}

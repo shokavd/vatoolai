@@ -45,13 +45,7 @@ Match the tone of the original email.`,
 
 Return only the cleaned text, no commentary.`,
 
-  social_media: `You receive content, an idea, or a topic. Create social media posts using markdown:
-
-**LinkedIn Post** (professional, 150-200 words, includes a question or call-to-action at the end)
-**Instagram Caption** (engaging, conversational, 50-80 words + 5 relevant hashtags)
-**X / Twitter Post** (punchy, under 280 characters, no hashtags unless essential)
-
-Make each post feel native to its platform.`,
+  social_media: `PLACEHOLDER_SOCIAL`,
 
   invoice_proposal: `You receive project details (client, deliverables, timeline, rate). Output using markdown:
 
@@ -100,7 +94,7 @@ Write in professional HR language.`,
 Write as if explaining to a smart friend with no legal background.`,
 };
 
-function buildSystemPrompt(mode: string, tone: string, language: string, customInstruction?: string): string {
+function buildSystemPrompt(mode: string, tone: string, language: string, customInstruction?: string, platforms?: string[]): string {
   const toneInstructions: Record<string, string> = {
     professional: "Use a professional, formal tone throughout.",
     casual: "Use a casual, relaxed tone — like writing to a colleague you know well.",
@@ -116,13 +110,29 @@ function buildSystemPrompt(mode: string, tone: string, language: string, customI
     return `Follow this instruction exactly:\n\n${customInstruction}${toneNote}${languageNote}`;
   }
 
+  if (mode === "social_media" && platforms && platforms.length > 0) {
+    const platformPrompts: Record<string, string> = {
+      linkedin: "**LinkedIn Post** (professional, 150-200 words, ends with a question or CTA)",
+      instagram: "**Instagram Caption** (engaging, conversational, 50-80 words + 5 relevant hashtags)",
+      twitter: "**X / Twitter Post** (punchy, under 280 characters, no hashtags unless essential)",
+      facebook: "**Facebook Post** (conversational, 40-80 words, encourages comments or reactions)",
+      tiktok: "**TikTok Caption** (hook in first line, casual and energetic, 3-5 hashtags)",
+      pinterest: "**Pinterest Description** (descriptive, keyword-rich, 100-150 words)",
+      youtube: "**YouTube Description** (150-200 words, includes a timestamps placeholder section and CTA to subscribe)",
+      threads: "**Threads Post** (casual and conversational, 150-300 characters)",
+      newsletter: "**Newsletter Intro** (warm, personal, 80-120 words — draws readers into the full email)",
+    };
+    const selectedPrompts = platforms.map((p: string) => platformPrompts[p]).filter(Boolean).join("\n");
+    return `You receive content, an idea, or a topic. Create platform-ready social media posts using markdown. Write ONLY the platforms listed below — nothing else:\n\n${selectedPrompts}\n\nMake each post feel completely native to its platform.${toneNote}${languageNote}`;
+  }
+
   const base = modePrompts[mode] || modePrompts["cleanup"];
   return `${base}${toneNote}${languageNote}`;
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const { input, mode, tone, language, customInstruction, variations, isPro } = await req.json();
+    const { input, mode, tone, language, customInstruction, variations, isPro, platforms } = await req.json();
 
     if (!input || typeof input !== "string" || input.trim().length === 0) {
       return NextResponse.json({ error: "Input is required." }, { status: 400 });
@@ -140,7 +150,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid mode." }, { status: 400 });
     }
 
-    const systemPrompt = buildSystemPrompt(mode, tone, language, customInstruction);
+    const systemPrompt = buildSystemPrompt(mode, tone, language, customInstruction, platforms);
 
     if (variations) {
       const [v1, v2, v3] = await Promise.all([
