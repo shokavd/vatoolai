@@ -62,21 +62,29 @@ function incrementUsage(): number {
   return newCount;
 }
 
+function isPro(): boolean {
+  if (typeof window === "undefined") return false;
+  return localStorage.getItem("clarity_ai_pro") === "true";
+}
+
 export default function ClarityTool() {
   const [selectedMode, setSelectedMode] = useState(MODES[0]);
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const [usageCount, setUsageCount] = useState(0);
+  const [proUser, setProUser] = useState(false);
 
   useEffect(() => {
     setUsageCount(getUsageCount());
+    setProUser(isPro());
   }, []);
 
   const remaining = Math.max(0, FREE_LIMIT - usageCount);
-  const isLimitReached = usageCount >= FREE_LIMIT;
+  const isLimitReached = !proUser && usageCount >= FREE_LIMIT;
 
   async function handleProcess() {
     if (!input.trim() || isLimitReached) return;
@@ -106,6 +114,20 @@ export default function ClarityTool() {
       setError("Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleCheckout() {
+    setCheckoutLoading(true);
+    try {
+      const res = await fetch("/api/checkout", { method: "POST" });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else setError("Could not start checkout. Please try again.");
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setCheckoutLoading(false);
     }
   }
 
@@ -154,11 +176,13 @@ export default function ClarityTool() {
       />
       <div className="flex items-center justify-between mt-1 mb-4">
         <span className="text-xs text-gray-400">{input.length} / 5,000 characters</span>
-        {!isLimitReached && (
+        {proUser ? (
+          <span className="text-xs text-indigo-600 font-medium">✦ Pro — unlimited uses</span>
+        ) : !isLimitReached ? (
           <span className="text-xs text-gray-400">
             {remaining} free {remaining === 1 ? "use" : "uses"} remaining today
           </span>
-        )}
+        ) : null}
       </div>
 
       {/* Action or Upgrade */}
@@ -170,12 +194,13 @@ export default function ClarityTool() {
           <p className="text-sm text-indigo-700 mb-4">
             Upgrade to Pro for unlimited uses — just €9/month
           </p>
-          <a
-            href="mailto:shokavdooren@gmail.com?subject=Clarity AI Pro — I want to upgrade"
-            className="inline-block bg-indigo-600 text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors"
+          <button
+            onClick={handleCheckout}
+            disabled={checkoutLoading}
+            className="inline-block bg-indigo-600 text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
           >
-            Get Pro Access →
-          </a>
+            {checkoutLoading ? "Redirecting..." : "Get Pro Access →"}
+          </button>
         </div>
       ) : (
         <button

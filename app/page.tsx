@@ -1,5 +1,6 @@
 import Header from "./components/Header";
 import ClarityTool from "./components/ClarityTool";
+import CheckoutButton from "./components/CheckoutButton";
 
 export default function Home() {
   return (
@@ -219,12 +220,7 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <a
-                href="mailto:shokavdooren@gmail.com?subject=Clarity AI Pro — I want to upgrade"
-                className="block text-center bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors"
-              >
-                Get Pro Access →
-              </a>
+              <CheckoutButton />
             </div>
           </div>
         </div>
