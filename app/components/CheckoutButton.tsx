@@ -20,7 +20,7 @@ export default function CheckoutButton() {
     <button
       onClick={handleCheckout}
       disabled={loading}
-      className="w-full block text-center bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50"
+      className="w-full block text-center bg-amber-400 text-slate-950 font-bold py-3 rounded-xl hover:bg-amber-300 transition-colors disabled:opacity-50 shadow-lg shadow-amber-400/20"
     >
       {loading ? "Redirecting..." : "Get Pro Access →"}
     </button>

@@ -1,48 +1,71 @@
 "use client";
 
+import { useState } from "react";
 import Header from "./components/Header";
 import ClarityTool from "./components/ClarityTool";
 import CheckoutButton from "./components/CheckoutButton";
 import { useTranslation } from "./lib/TranslationContext";
 
 const MODE_CARDS = [
-  { icon: "📋", key: "meeting_notes", label: "Meeting Notes", desc: "Clean summary, action items, and a follow-up email — from raw notes." },
-  { icon: "🧠", key: "brain_dump", label: "Brain Dump", desc: "Organized plan with priorities from a wall of scattered ideas." },
-  { icon: "✉️", key: "email_reply", label: "Email Reply", desc: "Professional reply ready to copy-paste from any email." },
-  { icon: "📄", key: "cover_letter", label: "Cover Letter", desc: "Tailored, compelling cover letter from any job description." },
-  { icon: "✨", key: "cleanup", label: "Text Cleanup", desc: "Grammar, flow, structure — your voice stays intact." },
-  { icon: "📱", key: "social_media", label: "Social Media", desc: "Ready-to-post content for any platform from any topic." },
-  { icon: "💼", key: "invoice", label: "Invoice / Proposal", desc: "Professional project proposal or invoice outline in seconds." },
-  { icon: "🗓️", key: "agenda", label: "Meeting Agenda", desc: "Structured, timed agenda ready to share with attendees." },
-  { icon: "⭐", key: "review", label: "Performance Review", desc: "Professional review or self-assessment in HR language." },
-  { icon: "⚖️", key: "legal", label: "Legal Simplifier", desc: "Plain-English summary of any contract or legal text." },
-  { icon: "🛠️", key: "custom", label: "Custom (Pro)", desc: "Write your own instruction — Clarity AI follows it exactly." },
+  { icon: "📋", label: "Meeting Notes", desc: "Clean summary, action items, and a follow-up email — from raw notes." },
+  { icon: "🧠", label: "Brain Dump", desc: "Organized plan with priorities from a wall of scattered ideas." },
+  { icon: "✉️", label: "Email Reply", desc: "Professional reply ready to copy-paste from any email." },
+  { icon: "📄", label: "Cover Letter", desc: "Tailored, compelling cover letter from any job description." },
+  { icon: "✨", label: "Text Cleanup", desc: "Grammar, flow, structure — your voice stays intact." },
+  { icon: "📱", label: "Social Media", desc: "Ready-to-post content for 9 platforms from any topic." },
+  { icon: "💼", label: "Invoice / Proposal", desc: "Professional project proposal or invoice outline in seconds." },
+  { icon: "🗓️", label: "Meeting Agenda", desc: "Structured, timed agenda ready to share with attendees." },
+  { icon: "⭐", label: "Performance Review", desc: "Professional review or self-assessment in HR language." },
+  { icon: "⚖️", label: "Legal Simplifier", desc: "Plain-English summary of any contract or legal text." },
+  { icon: "🛠️", label: "Custom (Pro)", desc: "Write your own instruction — Clarity AI follows it exactly." },
 ];
+
+function FAQItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-white/8 rounded-xl overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-white/3 transition-colors"
+      >
+        <span className="font-medium text-white text-sm sm:text-base">{q}</span>
+        <span className={`text-teal-400 text-lg transition-transform ${open ? "rotate-45" : ""}`}>+</span>
+      </button>
+      {open && (
+        <div className="px-6 pb-4 text-sm text-slate-400 leading-relaxed border-t border-white/5">
+          <div className="pt-3">{a}</div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Home() {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-[#070d14] text-white">
       <Header />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-24 px-4 sm:px-6 text-center overflow-hidden hero-grid">
-        {/* Gradient orbs */}
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-40 left-1/4 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-40 right-1/4 w-64 h-64 bg-indigo-400/10 rounded-full blur-3xl pointer-events-none" />
+      <section className="relative pt-32 pb-24 px-4 sm:px-6 text-center overflow-hidden">
+        {/* Grid */}
+        <div className="absolute inset-0 hero-grid opacity-40 pointer-events-none" />
+        {/* Glow orbs */}
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-32 left-1/3 w-48 h-48 bg-cyan-400/8 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-32 right-1/3 w-48 h-48 bg-teal-600/8 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-indigo-300 text-xs font-medium px-4 py-2 rounded-full mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+          <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 text-teal-300 text-xs font-medium px-4 py-2 rounded-full mb-8">
+            <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
             {t.hero.badge}
           </div>
 
           <h1 className="text-5xl sm:text-7xl font-bold leading-tight mb-6 tracking-tight">
             {t.hero.headline}
             <br />
-            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-teal-400 via-cyan-400 to-teal-300 bg-clip-text text-transparent">
               {t.hero.headlineAccent}
             </span>
           </h1>
@@ -54,7 +77,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="#tool"
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-lg px-8 py-4 rounded-xl hover:from-indigo-500 hover:to-purple-500 transition-all shadow-xl shadow-indigo-500/30 w-full sm:w-auto text-center"
+              className="bg-amber-400 text-slate-950 font-bold text-lg px-8 py-4 rounded-xl hover:bg-amber-300 transition-all shadow-xl shadow-amber-400/20 w-full sm:w-auto text-center"
             >
               {t.hero.cta}
             </a>
@@ -69,21 +92,55 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Stats bar */}
+      <div className="border-y border-white/5 bg-white/[0.02] py-6 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+          {[
+            { value: "11", label: t.stats.modes },
+            { value: "10", label: t.stats.languages },
+            { value: "9", label: "Social platforms" },
+            { value: "€0", label: t.stats.free },
+          ].map((stat) => (
+            <div key={stat.label}>
+              <div className="text-2xl sm:text-3xl font-bold text-teal-400">{stat.value}</div>
+              <div className="text-xs sm:text-sm text-slate-500 mt-1">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* How it works */}
-      <section id="how-it-works" className="py-24 px-4 sm:px-6 bg-slate-900/50">
+      <section id="how-it-works" className="py-24 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-16">{t.howItWorks.title}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {t.howItWorks.steps.map((step, i) => (
               <div key={i} className="relative text-center group">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white text-xl font-bold flex items-center justify-center mx-auto mb-5 shadow-lg shadow-indigo-500/30 group-hover:shadow-indigo-500/50 transition-shadow">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-500 text-slate-950 text-xl font-bold flex items-center justify-center mx-auto mb-5 shadow-lg shadow-teal-500/25 group-hover:shadow-teal-500/40 transition-shadow">
                   {i + 1}
                 </div>
                 <h3 className="font-semibold text-lg text-white mb-2">{step.title}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
                 {i < 2 && (
-                  <div className="hidden sm:block absolute top-7 left-[calc(50%+3rem)] w-[calc(100%-6rem)] h-px bg-gradient-to-r from-indigo-600/50 to-transparent" />
+                  <div className="hidden sm:block absolute top-7 left-[calc(50%+3.5rem)] w-[calc(100%-7rem)] h-px bg-gradient-to-r from-teal-500/40 to-transparent" />
                 )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Who it's for */}
+      <section className="py-24 px-4 sm:px-6 bg-white/[0.02] border-y border-white/5">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">{t.personas.title}</h2>
+          <p className="text-center text-slate-400 mb-14 text-lg max-w-2xl mx-auto">{t.personas.sub}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {t.personas.items.map((item) => (
+              <div key={item.title} className="group bg-white/[0.03] hover:bg-teal-500/5 border border-white/8 hover:border-teal-500/30 rounded-2xl p-6 transition-all">
+                <span className="text-3xl mb-4 block">{item.icon}</span>
+                <h3 className="font-semibold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -97,23 +154,46 @@ export default function Home() {
           <p className="text-center text-slate-400 mb-14 text-lg">{t.modes.sub}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {MODE_CARDS.map((item) => (
-              <div
-                key={item.key}
-                className="group relative bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-indigo-500/40 rounded-2xl p-6 transition-all cursor-default"
-              >
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-600/0 to-purple-600/0 group-hover:from-indigo-600/5 group-hover:to-purple-600/5 transition-all" />
-                <div className="relative">
-                  <span className="text-3xl mb-3 block">{item.icon}</span>
-                  <h3 className="font-semibold text-white mb-2">{item.label}</h3>
-                  <p className="text-sm text-slate-400">{item.desc}</p>
+              <div key={item.label} className="group bg-white/[0.03] hover:bg-teal-500/5 border border-white/8 hover:border-teal-500/30 rounded-2xl p-6 transition-all cursor-default">
+                <span className="text-3xl mb-3 block">{item.icon}</span>
+                <h3 className="font-semibold text-white mb-2">{item.label}</h3>
+                <p className="text-sm text-slate-400">{item.desc}</p>
+              </div>
+            ))}
+            <div className="bg-white/[0.02] border border-dashed border-white/10 rounded-2xl p-6">
+              <span className="text-3xl mb-3 block">🚀</span>
+              <h3 className="font-semibold text-slate-500 mb-2">{t.modes.more}</h3>
+              <p className="text-sm text-slate-600">{t.modes.moreDesc}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-24 px-4 sm:px-6 bg-white/[0.02] border-y border-white/5">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">{t.testimonials.title}</h2>
+          <p className="text-center text-slate-400 mb-14 text-lg">{t.testimonials.sub}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {t.testimonials.items.map((item, i) => (
+              <div key={i} className="bg-white/[0.03] border border-white/8 rounded-2xl p-6">
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, s) => (
+                    <span key={s} className="text-amber-400 text-sm">★</span>
+                  ))}
+                </div>
+                <p className="text-slate-300 text-sm leading-relaxed mb-5">&ldquo;{item.quote}&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center text-slate-950 font-bold text-sm">
+                    {item.name[0]}
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-white">{item.name}</div>
+                    <div className="text-xs text-slate-500">{item.title}</div>
+                  </div>
                 </div>
               </div>
             ))}
-            <div className="group bg-white/[0.02] border border-dashed border-white/10 rounded-2xl p-6">
-              <span className="text-3xl mb-3 block">🚀</span>
-              <h3 className="font-semibold text-slate-400 mb-2">{t.modes.more}</h3>
-              <p className="text-sm text-slate-500">{t.modes.moreDesc}</p>
-            </div>
           </div>
         </div>
       </section>
@@ -128,9 +208,9 @@ export default function Home() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="py-24 px-4 sm:px-6 bg-slate-900/50">
+      <section id="pricing" className="py-24 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-3">{t.pricing.title}</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">{t.pricing.title}</h2>
           <p className="text-center text-slate-400 mb-14 text-lg">{t.pricing.sub}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Free */}
@@ -141,7 +221,7 @@ export default function Home() {
               <ul className="space-y-3 mb-8">
                 {t.pricing.free.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm text-slate-300">
-                    <svg className="h-4 w-4 text-indigo-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-4 w-4 text-teal-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     {f}
@@ -154,17 +234,17 @@ export default function Home() {
             </div>
 
             {/* Pro */}
-            <div className="relative bg-gradient-to-br from-indigo-600/20 to-purple-600/20 border border-indigo-500/40 rounded-2xl p-8">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-semibold px-4 py-1 rounded-full shadow-lg">
+            <div className="relative bg-gradient-to-br from-teal-500/15 to-cyan-500/10 border border-teal-500/40 rounded-2xl p-8">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-950 text-xs font-bold px-4 py-1 rounded-full shadow-lg">
                 {t.pricing.pro.badge}
               </div>
-              <div className="text-sm font-semibold text-indigo-400 uppercase tracking-wide mb-2">{t.pricing.pro.label}</div>
+              <div className="text-sm font-semibold text-teal-400 uppercase tracking-wide mb-2">{t.pricing.pro.label}</div>
               <div className="text-5xl font-bold text-white mb-1">€9</div>
               <div className="text-sm text-slate-400 mb-8">{t.pricing.pro.period}</div>
               <ul className="space-y-3 mb-8">
                 {t.pricing.pro.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm text-slate-200">
-                    <svg className="h-4 w-4 text-purple-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     {f}
@@ -177,9 +257,60 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Trust badges */}
+      <div className="border-t border-white/5 py-8 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto flex flex-wrap items-center justify-center gap-6 text-sm text-slate-500">
+          {[
+            { icon: "🔒", label: t.trust.noStorage },
+            { icon: "🤖", label: t.trust.poweredBy },
+            { icon: "✕", label: t.trust.cancelAnytime },
+            { icon: "📱", label: t.trust.allDevices },
+          ].map((item) => (
+            <div key={item.label} className="flex items-center gap-2">
+              <span>{item.icon}</span>
+              <span>{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <section className="py-24 px-4 sm:px-6 bg-white/[0.02] border-t border-white/5">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-14">{t.faq.title}</h2>
+          <div className="space-y-3">
+            {t.faq.items.map((item) => (
+              <FAQItem key={item.q} q={item.q} a={item.a} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Banner */}
+      <section className="py-20 px-4 sm:px-6">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="bg-gradient-to-br from-teal-500/10 to-cyan-500/5 border border-teal-500/20 rounded-3xl p-12">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              {t.hero.headline}
+              <br />
+              <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
+                {t.hero.headlineAccent}
+              </span>
+            </h2>
+            <p className="text-slate-400 mb-8">{t.hero.ctaSub}</p>
+            <a
+              href="#tool"
+              className="inline-block bg-amber-400 text-slate-950 font-bold text-lg px-8 py-4 rounded-xl hover:bg-amber-300 transition-all shadow-xl shadow-amber-400/20"
+            >
+              {t.hero.cta}
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-white/5 py-8 px-4 sm:px-6 text-center bg-slate-950">
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-600">
           © {new Date().getFullYear()} {t.footer.copy}
         </p>
       </footer>

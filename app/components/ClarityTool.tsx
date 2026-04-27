@@ -294,28 +294,24 @@ export default function ClarityTool() {
           <div className="flex flex-wrap gap-2">
             {PLATFORMS.map((platform) => {
               const isSelected = selectedPlatforms.includes(platform.id);
-              const isDisabled = !proUser && !isSelected && selectedPlatforms.length >= 1;
 
               return (
                 <button
                   key={platform.id}
-                  title={isDisabled ? "Upgrade to Pro to select multiple platforms" : platform.hint}
+                  title={platform.hint}
                   onClick={() => {
-                    if (isDisabled) return;
                     if (!proUser) {
                       setSelectedPlatforms([platform.id]);
                       return;
                     }
                     setSelectedPlatforms(prev =>
                       prev.includes(platform.id)
-                        ? prev.filter(p => p !== platform.id)
+                        ? prev.length === 1 ? prev : prev.filter(p => p !== platform.id)
                         : [...prev, platform.id]
                     );
                   }}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                    isDisabled
-                      ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
-                      : isSelected
+                    isSelected
                       ? "bg-indigo-600 text-white border-indigo-600"
                       : "bg-white text-gray-600 border-gray-200 hover:border-indigo-300"
                   }`}
