@@ -273,7 +273,14 @@ export default function ClarityTool() {
           <div className="flex items-center justify-between mb-3">
             <p className="text-sm font-medium text-gray-700">
               Choose platforms
-              {!proUser && <span className="ml-2 text-xs text-gray-400">(free: pick 1 · <button onClick={handleCheckout} className="text-indigo-500 underline hover:no-underline">Pro for all</button>)</span>}
+              {!proUser && (
+                <span className="ml-2 text-xs text-gray-400">
+                  free: 1 at a time ·{" "}
+                  <button onClick={handleCheckout} className="text-indigo-500 underline hover:no-underline">
+                    Pro for multiple
+                  </button>
+                </span>
+              )}
             </p>
             {proUser && (
               <button
@@ -287,16 +294,14 @@ export default function ClarityTool() {
           <div className="flex flex-wrap gap-2">
             {PLATFORMS.map((platform) => {
               const isSelected = selectedPlatforms.includes(platform.id);
-              const isLocked = platform.proOnly && !proUser;
               const isDisabled = !proUser && !isSelected && selectedPlatforms.length >= 1;
 
               return (
                 <button
                   key={platform.id}
-                  title={isLocked ? "Pro only" : platform.hint}
-                  disabled={isLocked || isDisabled}
+                  title={isDisabled ? "Upgrade to Pro to select multiple platforms" : platform.hint}
                   onClick={() => {
-                    if (isLocked || isDisabled) return;
+                    if (isDisabled) return;
                     if (!proUser) {
                       setSelectedPlatforms([platform.id]);
                       return;
@@ -308,9 +313,7 @@ export default function ClarityTool() {
                     );
                   }}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                    isLocked
-                      ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                      : isDisabled
+                    isDisabled
                       ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
                       : isSelected
                       ? "bg-indigo-600 text-white border-indigo-600"
@@ -319,14 +322,13 @@ export default function ClarityTool() {
                 >
                   <span>{platform.icon}</span>
                   <span>{platform.label}</span>
-                  {isLocked && <span className="text-xs bg-indigo-100 text-indigo-500 px-1 rounded">Pro</span>}
                 </button>
               );
             })}
           </div>
           {!proUser && (
             <p className="text-xs text-gray-400 mt-2">
-              Upgrade to Pro to generate for multiple platforms at once + unlock Facebook, TikTok, Pinterest, YouTube, Threads & Newsletter
+              ✦ Pro: select multiple platforms and generate all posts at once
             </p>
           )}
         </div>
