@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { MODES, TONES, LANGUAGES, PLATFORMS } from "./tool/modes";
 import { getHistory, saveToHistory, clearHistory, formatTimeAgo, type HistoryItem } from "./tool/history";
+import { useTranslation } from "../lib/TranslationContext";
 
 const FREE_LIMIT = 3;
 const FREE_MAX_CHARS = 5000;
@@ -30,7 +31,7 @@ function isPro(): boolean {
   return localStorage.getItem("clarity_ai_pro") === "true";
 }
 
-function OutputBlock({ text, label }: { text: string; label?: string }) {
+function OutputBlock({ text, copyLabel, copiedLabel }: { text: string; copyLabel: string; copiedLabel: string }) {
   const [copied, setCopied] = useState(false);
   async function handleCopy() {
     await navigator.clipboard.writeText(text);
@@ -39,7 +40,6 @@ function OutputBlock({ text, label }: { text: string; label?: string }) {
   }
   return (
     <div className="mb-4">
-      {label && <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2">{label}</p>}
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 prose prose-sm max-w-none text-gray-800 [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-gray-300 [&_th]:bg-gray-100 [&_th]:p-2 [&_th]:text-left [&_td]:border [&_td]:border-gray-300 [&_td]:p-2">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
       </div>
@@ -48,28 +48,29 @@ function OutputBlock({ text, label }: { text: string; label?: string }) {
         className="mt-2 flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-700 transition-colors"
       >
         {copied ? (
-          <><span className="text-green-500">✓</span><span className="text-green-600">Copied!</span></>
+          <><span className="text-green-500">✓</span><span className="text-green-600">{copiedLabel}</span></>
         ) : (
-          <><span>📋</span><span>Copy</span></>
+          <><span>📋</span><span>{copyLabel}</span></>
         )}
       </button>
     </div>
   );
 }
 
-function HistoryPanel({ history, onSelect, onClear }: {
+function HistoryPanel({ history, onSelect, onClear, ui }: {
   history: HistoryItem[];
   onSelect: (item: HistoryItem) => void;
   onClear: () => void;
+  ui: { noHistory: string; recentResults: string; clearAll: string };
 }) {
   if (history.length === 0) {
-    return <p className="text-sm text-gray-400 text-center py-6">No history yet. Your results will appear here.</p>;
+    return <p className="text-sm text-gray-400 text-center py-6">{ui.noHistory}</p>;
   }
   return (
     <div>
       <div className="flex justify-between items-center mb-3">
-        <h3 className="font-semibold text-gray-900 text-sm">Recent results</h3>
-        <button onClick={onClear} className="text-xs text-red-400 hover:text-red-600 transition-colors">Clear all</button>
+        <h3 className="font-semibold text-gray-900 text-sm">{ui.recentResults}</h3>
+        <button onClick={onClear} className="text-xs text-red-400 hover:text-red-600 transition-colors">{ui.clearAll}</button>
       </div>
       <div className="space-y-2 max-h-80 overflow-y-auto">
         {history.map((item) => (
@@ -91,6 +92,9 @@ function HistoryPanel({ history, onSelect, onClear }: {
 }
 
 export default function ClarityTool() {
+  const { t } = useTranslation();
+  const ui = t.toolUI;
+
   const [selectedMode, setSelectedMode] = useState(MODES[0]);
   const [input, setInput] = useState("");
   const [customInstruction, setCustomInstruction] = useState("");
@@ -111,8 +115,7 @@ export default function ClarityTool() {
 
   useEffect(() => {
     setUsageCount(getUsageCount());
-    const pro = isPro();
-    setProUser(pro);
+    setProUser(isPro());
     setHistory(getHistory());
   }, []);
 
@@ -123,7 +126,7 @@ export default function ClarityTool() {
   async function handleProcess() {
     if (!input.trim() || isLimitReached) return;
     if (selectedMode.id === "custom" && !customInstruction.trim()) {
-      setError("Please enter your custom instruction.");
+      setError(ui.customInstructionError);
       return;
     }
 
@@ -151,7 +154,7 @@ export default function ClarityTool() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Something went wrong.");
+        setError(data.error || ui.networkError);
         return;
       }
 
@@ -161,29 +164,15 @@ export default function ClarityTool() {
       if (data.variations) {
         setOutputVariations(data.variations);
         setActiveVariation(0);
-        saveToHistory({
-          mode: selectedMode.id,
-          modeLabel: selectedMode.label,
-          inputPreview: input.slice(0, 80),
-          output: data.variations[0],
-          tone,
-          language,
-        }, proUser);
+        saveToHistory({ mode: selectedMode.id, modeLabel: selectedMode.label, inputPreview: input.slice(0, 80), output: data.variations[0], tone, language }, proUser);
       } else {
         setOutput(data.result);
-        saveToHistory({
-          mode: selectedMode.id,
-          modeLabel: selectedMode.label,
-          inputPreview: input.slice(0, 80),
-          output: data.result,
-          tone,
-          language,
-        }, proUser);
+        saveToHistory({ mode: selectedMode.id, modeLabel: selectedMode.label, inputPreview: input.slice(0, 80), output: data.result, tone, language }, proUser);
       }
 
       setHistory(getHistory());
     } catch {
-      setError("Network error. Please check your connection and try again.");
+      setError(ui.networkError);
     } finally {
       setLoading(false);
     }
@@ -195,9 +184,9 @@ export default function ClarityTool() {
       const res = await fetch("/api/checkout", { method: "POST" });
       const data = await res.json();
       if (data.url) window.location.href = data.url;
-      else setError("Could not start checkout. Please try again.");
+      else setError(ui.checkoutError);
     } catch {
-      setError("Network error. Please try again.");
+      setError(ui.checkoutError);
     } finally {
       setCheckoutLoading(false);
     }
@@ -226,8 +215,6 @@ export default function ClarityTool() {
     setHistory([]);
   }
 
-  const currentOutput = outputVariations.length > 0 ? outputVariations[activeVariation] : output;
-
   return (
     <div className="w-full max-w-4xl mx-auto">
       {/* Mode Selector */}
@@ -236,7 +223,7 @@ export default function ClarityTool() {
           <button
             key={mode.id}
             onClick={() => handleModeChange(mode)}
-            title={mode.proOnly && !proUser ? "Pro only" : undefined}
+            title={mode.proOnly && !proUser ? ui.proOnly : undefined}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all relative ${
               selectedMode.id === mode.id
                 ? "bg-indigo-600 text-white shadow-sm"
@@ -261,7 +248,7 @@ export default function ClarityTool() {
         <textarea
           value={customInstruction}
           onChange={(e) => setCustomInstruction(e.target.value)}
-          placeholder="Write your instruction here. E.g. 'Summarize this into 5 bullet points for a 10-year-old' or 'Rewrite this as a formal business letter'..."
+          placeholder={ui.customInstructionPlaceholder}
           rows={3}
           className="w-full rounded-xl border border-indigo-200 bg-indigo-50 p-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none mb-3"
         />
@@ -272,12 +259,12 @@ export default function ClarityTool() {
         <div className="mb-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
           <div className="flex items-center justify-between mb-3">
             <p className="text-sm font-medium text-gray-700">
-              Choose platforms
+              {ui.choosePlatforms}
               {!proUser && (
                 <span className="ml-2 text-xs text-gray-400">
-                  free: 1 at a time ·{" "}
+                  {ui.freePlatformNote} ·{" "}
                   <button onClick={handleCheckout} className="text-indigo-500 underline hover:no-underline">
-                    Pro for multiple
+                    {ui.proForMultiple}
                   </button>
                 </span>
               )}
@@ -287,14 +274,13 @@ export default function ClarityTool() {
                 onClick={() => setSelectedPlatforms(PLATFORMS.map(p => p.id))}
                 className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
               >
-                Select all
+                {ui.selectAll}
               </button>
             )}
           </div>
           <div className="flex flex-wrap gap-2">
             {PLATFORMS.map((platform) => {
               const isSelected = selectedPlatforms.includes(platform.id);
-
               return (
                 <button
                   key={platform.id}
@@ -323,9 +309,7 @@ export default function ClarityTool() {
             })}
           </div>
           {!proUser && (
-            <p className="text-xs text-gray-400 mt-2">
-              ✦ Pro: select multiple platforms and generate all posts at once
-            </p>
+            <p className="text-xs text-gray-400 mt-2">{ui.proSocialHint}</p>
           )}
         </div>
       )}
@@ -333,7 +317,7 @@ export default function ClarityTool() {
       {/* Tone + Language selectors */}
       <div className="flex flex-wrap gap-3 mb-3">
         <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-500 font-medium">Tone</label>
+          <label className="text-xs text-gray-500 font-medium">{ui.tone}</label>
           <select
             value={tone}
             onChange={(e) => setTone(e.target.value)}
@@ -345,7 +329,7 @@ export default function ClarityTool() {
           </select>
         </div>
         <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-500 font-medium">Output language</label>
+          <label className="text-xs text-gray-500 font-medium">{ui.outputLanguage}</label>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
@@ -370,13 +354,19 @@ export default function ClarityTool() {
 
       <div className="flex items-center justify-between mt-1 mb-3">
         <span className="text-xs text-gray-400">
-          {input.length.toLocaleString()} / {maxChars.toLocaleString()} characters
-          {!proUser && <span className="text-indigo-500 ml-1">· <button onClick={handleCheckout} className="underline hover:no-underline">Go Pro for 15,000</button></span>}
+          {input.length.toLocaleString()} / {maxChars.toLocaleString()} {/* chars */}
+          {!proUser && (
+            <span className="text-indigo-500 ml-1">
+              · <button onClick={handleCheckout} className="underline hover:no-underline">{ui.goProCharLimit}</button>
+            </span>
+          )}
         </span>
         {proUser ? (
-          <span className="text-xs text-indigo-600 font-medium">✦ Pro — unlimited uses</span>
+          <span className="text-xs text-indigo-600 font-medium">{ui.proUnlimited}</span>
         ) : !isLimitReached ? (
-          <span className="text-xs text-gray-400">{remaining} free {remaining === 1 ? "use" : "uses"} remaining today</span>
+          <span className="text-xs text-gray-400">
+            {ui.usesRemaining.replace("{n}", String(remaining))}
+          </span>
         ) : null}
       </div>
 
@@ -391,22 +381,22 @@ export default function ClarityTool() {
           }`}
         >
           <span>{generateVariations ? "✓" : "+"}</span>
-          <span>Generate 3 variations</span>
+          <span>{ui.generateVariations.replace(" →", "")}</span>
         </button>
-        <span className="text-xs text-gray-400">Pick your favourite version</span>
+        <span className="text-xs text-gray-400">{ui.variationsHint}</span>
       </div>
 
       {/* Action or Upgrade */}
       {isLimitReached ? (
         <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-5 text-center mb-6">
-          <p className="font-semibold text-indigo-900 mb-1">You&apos;ve used your 3 free uses today</p>
-          <p className="text-sm text-indigo-700 mb-4">Upgrade to Pro for unlimited uses, 11 modes, custom instructions, and 15,000 character input — just €9/month</p>
+          <p className="font-semibold text-indigo-900 mb-1">{ui.limitTitle}</p>
+          <p className="text-sm text-indigo-700 mb-4">{ui.limitDesc}</p>
           <button
             onClick={handleCheckout}
             disabled={checkoutLoading}
             className="inline-block bg-indigo-600 text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
           >
-            {checkoutLoading ? "Redirecting..." : "Get Pro Access →"}
+            {checkoutLoading ? ui.redirecting : ui.getProAccess}
           </button>
         </div>
       ) : (
@@ -421,10 +411,10 @@ export default function ClarityTool() {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
-              {generateVariations ? "Generating 3 variations..." : "Clarifying..."}
+              {generateVariations ? ui.generatingVariations : ui.clarifying}
             </>
           ) : (
-            generateVariations ? "Generate 3 variations →" : "Clarify →"
+            generateVariations ? ui.generateVariations : ui.clarify
           )}
         </button>
       )}
@@ -448,19 +438,19 @@ export default function ClarityTool() {
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
-                Variation {i + 1}
+                {ui.variation} {i + 1}
               </button>
             ))}
           </div>
-          <OutputBlock text={outputVariations[activeVariation]} />
+          <OutputBlock text={outputVariations[activeVariation]} copyLabel={ui.copy} copiedLabel={ui.copied} />
         </div>
       )}
 
       {/* Output — single */}
       {output && !outputVariations.length && (
         <div className="mt-6">
-          <h3 className="font-semibold text-gray-900 mb-3">Result</h3>
-          <OutputBlock text={output} />
+          <h3 className="font-semibold text-gray-900 mb-3">{ui.result}</h3>
+          <OutputBlock text={output} copyLabel={ui.copy} copiedLabel={ui.copied} />
         </div>
       )}
 
@@ -471,8 +461,8 @@ export default function ClarityTool() {
           className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition-colors"
         >
           <span>{showHistory ? "▾" : "▸"}</span>
-          <span>History ({history.length}{proUser ? "/20" : "/5"})</span>
-          {!proUser && <span className="text-xs text-indigo-500">Pro gets 20</span>}
+          <span>{ui.history} ({history.length}{proUser ? "/20" : "/5"})</span>
+          {!proUser && <span className="text-xs text-indigo-500">{ui.proGets20}</span>}
         </button>
         {showHistory && (
           <div className="mt-4">
@@ -480,6 +470,7 @@ export default function ClarityTool() {
               history={history}
               onSelect={handleHistorySelect}
               onClear={handleClearHistory}
+              ui={{ noHistory: ui.noHistory, recentResults: ui.recentResults, clearAll: ui.clearAll }}
             />
           </div>
         )}

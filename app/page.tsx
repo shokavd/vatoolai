@@ -2,23 +2,10 @@
 
 import { useState } from "react";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import ClarityTool from "./components/ClarityTool";
 import CheckoutButton from "./components/CheckoutButton";
 import { useTranslation } from "./lib/TranslationContext";
-
-const MODE_CARDS = [
-  { icon: "📋", label: "Meeting Notes", desc: "Clean summary, action items, and a follow-up email — from raw notes." },
-  { icon: "🧠", label: "Brain Dump", desc: "Organized plan with priorities from a wall of scattered ideas." },
-  { icon: "✉️", label: "Email Reply", desc: "Professional reply ready to copy-paste from any email." },
-  { icon: "📄", label: "Cover Letter", desc: "Tailored, compelling cover letter from any job description." },
-  { icon: "✨", label: "Text Cleanup", desc: "Grammar, flow, structure — your voice stays intact." },
-  { icon: "📱", label: "Social Media", desc: "Ready-to-post content for 9 platforms from any topic." },
-  { icon: "💼", label: "Invoice / Proposal", desc: "Professional project proposal or invoice outline in seconds." },
-  { icon: "🗓️", label: "Meeting Agenda", desc: "Structured, timed agenda ready to share with attendees." },
-  { icon: "⭐", label: "Performance Review", desc: "Professional review or self-assessment in HR language." },
-  { icon: "⚖️", label: "Legal Simplifier", desc: "Plain-English summary of any contract or legal text." },
-  { icon: "🛠️", label: "Custom (Pro)", desc: "Write your own instruction — Clarity AI follows it exactly." },
-];
 
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
@@ -153,7 +140,7 @@ export default function Home() {
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">{t.modes.title}</h2>
           <p className="text-center text-slate-400 mb-14 text-lg">{t.modes.sub}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {MODE_CARDS.map((item) => (
+            {t.modeCards.map((item) => (
               <div key={item.label} className="group bg-white/[0.03] hover:bg-teal-500/5 border border-white/8 hover:border-teal-500/30 rounded-2xl p-6 transition-all cursor-default">
                 <span className="text-3xl mb-3 block">{item.icon}</span>
                 <h3 className="font-semibold text-white mb-2">{item.label}</h3>
@@ -169,32 +156,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-24 px-4 sm:px-6 bg-white/[0.02] border-y border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">{t.testimonials.title}</h2>
-          <p className="text-center text-slate-400 mb-14 text-lg">{t.testimonials.sub}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {t.testimonials.items.map((item, i) => (
-              <div key={i} className="bg-white/[0.03] border border-white/8 rounded-2xl p-6">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, s) => (
-                    <span key={s} className="text-amber-400 text-sm">★</span>
-                  ))}
-                </div>
-                <p className="text-slate-300 text-sm leading-relaxed mb-5">&ldquo;{item.quote}&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center text-slate-950 font-bold text-sm">
-                    {item.name[0]}
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-white">{item.name}</div>
-                    <div className="text-xs text-slate-500">{item.title}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* Share your experience */}
+      <section className="py-16 px-4 sm:px-6 bg-white/[0.02] border-y border-white/5">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="text-3xl mb-4">⭐</div>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3">{t.testimonialSubmit.title}</h2>
+          <p className="text-slate-400 mb-8">{t.testimonialSubmit.sub}</p>
+          <a
+            href="https://g.page/r/clarity-ai-review"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-amber-400 text-slate-950 font-bold px-8 py-3 rounded-xl hover:bg-amber-300 transition-all shadow-lg shadow-amber-400/20"
+          >
+            {t.testimonialSubmit.cta}
+          </a>
         </div>
       </section>
 
@@ -308,12 +283,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-8 px-4 sm:px-6 text-center bg-slate-950">
-        <p className="text-sm text-slate-600">
-          © {new Date().getFullYear()} {t.footer.copy}
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }

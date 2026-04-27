@@ -10,6 +10,11 @@ const LOCALES: { id: Locale; flag: string; label: string }[] = [
   { id: "fr", flag: "🇫🇷", label: "FR" },
   { id: "de", flag: "🇩🇪", label: "DE" },
   { id: "pt", flag: "🇵🇹", label: "PT" },
+  { id: "it", flag: "🇮🇹", label: "IT" },
+  { id: "pl", flag: "🇵🇱", label: "PL" },
+  { id: "tr", flag: "🇹🇷", label: "TR" },
+  { id: "ja", flag: "🇯🇵", label: "JA" },
+  { id: "zh", flag: "🇨🇳", label: "ZH" },
 ];
 
 export default function Header() {
