@@ -40,15 +40,15 @@ function OutputBlock({ text, copyLabel, copiedLabel }: { text: string; copyLabel
   }
   return (
     <div className="mb-4">
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 prose prose-sm max-w-none text-gray-800 [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-gray-300 [&_th]:bg-gray-100 [&_th]:p-2 [&_th]:text-left [&_td]:border [&_td]:border-gray-300 [&_td]:p-2">
+      <div className="bg-slate-900/80 border border-white/10 rounded-xl p-5 prose prose-invert prose-sm max-w-none text-slate-200 [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-white/20 [&_th]:bg-slate-800 [&_th]:p-2 [&_th]:text-left [&_td]:border [&_td]:border-white/15 [&_td]:p-2 [&_a]:text-teal-400 [&_code]:bg-slate-800 [&_code]:px-1 [&_code]:rounded">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
       </div>
       <button
         onClick={handleCopy}
-        className="mt-2 flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-700 transition-colors"
+        className="mt-2 flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
       >
         {copied ? (
-          <><span className="text-green-500">✓</span><span className="text-green-600">{copiedLabel}</span></>
+          <><span className="text-teal-400">✓</span><span className="text-teal-400">{copiedLabel}</span></>
         ) : (
           <><span>📋</span><span>{copyLabel}</span></>
         )}
@@ -64,26 +64,26 @@ function HistoryPanel({ history, onSelect, onClear, ui }: {
   ui: { noHistory: string; recentResults: string; clearAll: string };
 }) {
   if (history.length === 0) {
-    return <p className="text-sm text-gray-400 text-center py-6">{ui.noHistory}</p>;
+    return <p className="text-sm text-slate-500 text-center py-6">{ui.noHistory}</p>;
   }
   return (
     <div>
       <div className="flex justify-between items-center mb-3">
-        <h3 className="font-semibold text-gray-900 text-sm">{ui.recentResults}</h3>
-        <button onClick={onClear} className="text-xs text-red-400 hover:text-red-600 transition-colors">{ui.clearAll}</button>
+        <h3 className="font-semibold text-slate-200 text-sm">{ui.recentResults}</h3>
+        <button onClick={onClear} className="text-xs text-red-400 hover:text-red-300 transition-colors">{ui.clearAll}</button>
       </div>
       <div className="space-y-2 max-h-80 overflow-y-auto">
         {history.map((item) => (
           <button
             key={item.id}
             onClick={() => onSelect(item)}
-            className="w-full text-left bg-gray-50 hover:bg-indigo-50 border border-gray-200 hover:border-indigo-200 rounded-lg p-3 transition-colors"
+            className="w-full text-left bg-white/[0.04] hover:bg-indigo-500/10 border border-white/8 hover:border-indigo-500/30 rounded-lg p-3 transition-colors"
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-medium text-indigo-600">{item.modeLabel}</span>
-              <span className="text-xs text-gray-400">{formatTimeAgo(item.timestamp)}</span>
+              <span className="text-xs font-medium text-indigo-400">{item.modeLabel}</span>
+              <span className="text-xs text-slate-500">{formatTimeAgo(item.timestamp)}</span>
             </div>
-            <p className="text-xs text-gray-600 truncate">{item.inputPreview}</p>
+            <p className="text-xs text-slate-400 truncate">{item.inputPreview}</p>
           </button>
         ))}
       </div>
@@ -224,24 +224,24 @@ export default function ClarityTool() {
             key={mode.id}
             onClick={() => handleModeChange(mode)}
             title={mode.proOnly && !proUser ? ui.proOnly : undefined}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all relative ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
               selectedMode.id === mode.id
-                ? "bg-indigo-600 text-white shadow-sm"
+                ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/20"
                 : mode.proOnly && !proUser
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                ? "bg-white/[0.04] text-slate-600 cursor-not-allowed"
+                : "bg-white/[0.06] text-slate-300 hover:bg-white/[0.10] hover:text-white"
             }`}
           >
             <span>{mode.icon}</span>
             <span>{mode.label}</span>
             {mode.proOnly && !proUser && (
-              <span className="text-xs bg-indigo-100 text-indigo-600 px-1 rounded ml-0.5">Pro</span>
+              <span className="text-xs bg-indigo-500/20 text-indigo-400 px-1 rounded ml-0.5">Pro</span>
             )}
           </button>
         ))}
       </div>
 
-      <p className="text-sm text-gray-500 mb-4">{selectedMode.description}</p>
+      <p className="text-sm text-slate-400 mb-4">{selectedMode.description}</p>
 
       {/* Custom instruction field */}
       {selectedMode.id === "custom" && (
@@ -250,20 +250,20 @@ export default function ClarityTool() {
           onChange={(e) => setCustomInstruction(e.target.value)}
           placeholder={ui.customInstructionPlaceholder}
           rows={3}
-          className="w-full rounded-xl border border-indigo-200 bg-indigo-50 p-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none mb-3"
+          className="w-full rounded-xl border border-indigo-500/30 bg-indigo-500/[0.08] p-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none mb-3"
         />
       )}
 
       {/* Platform selector — social media mode only */}
       {selectedMode.id === "social_media" && (
-        <div className="mb-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+        <div className="mb-4 p-4 bg-white/[0.04] rounded-xl border border-white/10">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-medium text-gray-700">
+            <p className="text-sm font-medium text-slate-300">
               {ui.choosePlatforms}
               {!proUser && (
-                <span className="ml-2 text-xs text-gray-400">
+                <span className="ml-2 text-xs text-slate-500">
                   {ui.freePlatformNote} ·{" "}
-                  <button onClick={handleCheckout} className="text-indigo-500 underline hover:no-underline">
+                  <button onClick={handleCheckout} className="text-indigo-400 underline hover:no-underline">
                     {ui.proForMultiple}
                   </button>
                 </span>
@@ -272,7 +272,7 @@ export default function ClarityTool() {
             {proUser && (
               <button
                 onClick={() => setSelectedPlatforms(PLATFORMS.map(p => p.id))}
-                className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
               >
                 {ui.selectAll}
               </button>
@@ -286,10 +286,7 @@ export default function ClarityTool() {
                   key={platform.id}
                   title={platform.hint}
                   onClick={() => {
-                    if (!proUser) {
-                      setSelectedPlatforms([platform.id]);
-                      return;
-                    }
+                    if (!proUser) { setSelectedPlatforms([platform.id]); return; }
                     setSelectedPlatforms(prev =>
                       prev.includes(platform.id)
                         ? prev.length === 1 ? prev : prev.filter(p => p !== platform.id)
@@ -299,7 +296,7 @@ export default function ClarityTool() {
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
                     isSelected
                       ? "bg-indigo-600 text-white border-indigo-600"
-                      : "bg-white text-gray-600 border-gray-200 hover:border-indigo-300"
+                      : "bg-white/[0.05] text-slate-300 border-white/10 hover:border-indigo-400/50"
                   }`}
                 >
                   <span>{platform.icon}</span>
@@ -309,7 +306,7 @@ export default function ClarityTool() {
             })}
           </div>
           {!proUser && (
-            <p className="text-xs text-gray-400 mt-2">{ui.proSocialHint}</p>
+            <p className="text-xs text-slate-500 mt-2">{ui.proSocialHint}</p>
           )}
         </div>
       )}
@@ -317,11 +314,11 @@ export default function ClarityTool() {
       {/* Tone + Language selectors */}
       <div className="flex flex-wrap gap-3 mb-3">
         <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-500 font-medium">{ui.tone}</label>
+          <label className="text-xs text-slate-400 font-medium">{ui.tone}</label>
           <select
             value={tone}
             onChange={(e) => setTone(e.target.value)}
-            className="text-sm border border-gray-200 rounded-lg px-2 py-1 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="text-sm border border-white/10 rounded-lg px-2 py-1 text-slate-200 bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             {TONES.map((t) => (
               <option key={t.id} value={t.id}>{t.label}</option>
@@ -329,11 +326,11 @@ export default function ClarityTool() {
           </select>
         </div>
         <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-500 font-medium">{ui.outputLanguage}</label>
+          <label className="text-xs text-slate-400 font-medium">{ui.outputLanguage}</label>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="text-sm border border-gray-200 rounded-lg px-2 py-1 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="text-sm border border-white/10 rounded-lg px-2 py-1 text-slate-200 bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             {LANGUAGES.map((l) => (
               <option key={l.id} value={l.id}>{l.label}</option>
@@ -349,22 +346,22 @@ export default function ClarityTool() {
         placeholder={selectedMode.placeholder}
         rows={8}
         maxLength={maxChars}
-        className="w-full rounded-xl border border-gray-200 p-4 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none bg-white"
+        className="w-full rounded-xl border border-white/10 p-4 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none bg-slate-900/60"
       />
 
       <div className="flex items-center justify-between mt-1 mb-3">
-        <span className="text-xs text-gray-400">
-          {input.length.toLocaleString()} / {maxChars.toLocaleString()} {/* chars */}
+        <span className="text-xs text-slate-600">
+          {input.length.toLocaleString()} / {maxChars.toLocaleString()}
           {!proUser && (
-            <span className="text-indigo-500 ml-1">
+            <span className="text-indigo-400 ml-1">
               · <button onClick={handleCheckout} className="underline hover:no-underline">{ui.goProCharLimit}</button>
             </span>
           )}
         </span>
         {proUser ? (
-          <span className="text-xs text-indigo-600 font-medium">{ui.proUnlimited}</span>
+          <span className="text-xs text-teal-400 font-medium">{ui.proUnlimited}</span>
         ) : !isLimitReached ? (
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-slate-500">
             {ui.usesRemaining.replace("{n}", String(remaining))}
           </span>
         ) : null}
@@ -377,24 +374,24 @@ export default function ClarityTool() {
           className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-full border transition-all ${
             generateVariations
               ? "bg-indigo-600 text-white border-indigo-600"
-              : "bg-white text-gray-600 border-gray-200 hover:border-indigo-300"
+              : "bg-white/[0.05] text-slate-400 border-white/10 hover:border-indigo-400/50"
           }`}
         >
           <span>{generateVariations ? "✓" : "+"}</span>
           <span>{ui.generateVariations.replace(" →", "")}</span>
         </button>
-        <span className="text-xs text-gray-400">{ui.variationsHint}</span>
+        <span className="text-xs text-slate-500">{ui.variationsHint}</span>
       </div>
 
       {/* Action or Upgrade */}
       {isLimitReached ? (
-        <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-5 text-center mb-6">
-          <p className="font-semibold text-indigo-900 mb-1">{ui.limitTitle}</p>
-          <p className="text-sm text-indigo-700 mb-4">{ui.limitDesc}</p>
+        <div className="bg-indigo-500/[0.08] border border-indigo-500/30 rounded-xl p-5 text-center mb-6">
+          <p className="font-semibold text-indigo-300 mb-1">{ui.limitTitle}</p>
+          <p className="text-sm text-indigo-400 mb-4">{ui.limitDesc}</p>
           <button
             onClick={handleCheckout}
             disabled={checkoutLoading}
-            className="inline-block bg-indigo-600 text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
+            className="inline-block bg-indigo-600 text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-500 transition-colors disabled:opacity-50"
           >
             {checkoutLoading ? ui.redirecting : ui.getProAccess}
           </button>
@@ -403,7 +400,7 @@ export default function ClarityTool() {
         <button
           onClick={handleProcess}
           disabled={loading || !input.trim()}
-          className="w-full bg-indigo-600 text-white font-semibold py-3 px-6 rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-indigo-600 text-white font-semibold py-3 px-6 rounded-xl hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20"
         >
           {loading ? (
             <>
@@ -421,7 +418,7 @@ export default function ClarityTool() {
 
       {/* Error */}
       {error && (
-        <div className="mt-4 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">{error}</div>
+        <div className="mt-4 bg-red-500/[0.08] border border-red-500/30 rounded-xl p-4 text-sm text-red-400">{error}</div>
       )}
 
       {/* Output — variations */}
@@ -435,7 +432,7 @@ export default function ClarityTool() {
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   activeVariation === i
                     ? "bg-indigo-600 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    : "bg-white/[0.06] text-slate-400 hover:bg-white/[0.10]"
                 }`}
               >
                 {ui.variation} {i + 1}
@@ -449,20 +446,20 @@ export default function ClarityTool() {
       {/* Output — single */}
       {output && !outputVariations.length && (
         <div className="mt-6">
-          <h3 className="font-semibold text-gray-900 mb-3">{ui.result}</h3>
+          <h3 className="font-semibold text-slate-200 mb-3">{ui.result}</h3>
           <OutputBlock text={output} copyLabel={ui.copy} copiedLabel={ui.copied} />
         </div>
       )}
 
       {/* History */}
-      <div className="mt-8 border-t border-gray-100 pt-6">
+      <div className="mt-8 border-t border-white/5 pt-6">
         <button
           onClick={() => setShowHistory(!showHistory)}
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition-colors"
+          className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-300 transition-colors"
         >
           <span>{showHistory ? "▾" : "▸"}</span>
           <span>{ui.history} ({history.length}{proUser ? "/20" : "/5"})</span>
-          {!proUser && <span className="text-xs text-indigo-500">{ui.proGets20}</span>}
+          {!proUser && <span className="text-xs text-indigo-400">{ui.proGets20}</span>}
         </button>
         {showHistory && (
           <div className="mt-4">

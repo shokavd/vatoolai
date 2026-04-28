@@ -10,22 +10,16 @@ const PRODUCT_LINKS = [
 ];
 
 const RESOURCE_LINKS = [
-  { key: "helpCenter" as const, href: "#faq" },
-  { key: "blog" as const, href: "#" },
-  { key: "changelog" as const, href: "#" },
-  { key: "roadmap" as const, href: "#" },
+  { key: "helpCenter" as const, href: "/help" },
+  { key: "blog" as const, href: "/blog" },
+  { key: "changelog" as const, href: "/changelog" },
+  { key: "roadmap" as const, href: "/roadmap" },
 ];
 
 const LEGAL_LINKS = [
   { key: "privacy" as const, href: "/privacy" },
   { key: "terms" as const, href: "/terms" },
   { key: "cookies" as const, href: "/cookies" },
-];
-
-const SOCIAL_LINKS = [
-  { label: "X / Twitter", href: "https://x.com/vatoolai", icon: "𝕏" },
-  { label: "LinkedIn", href: "https://linkedin.com/company/vatoolai", icon: "in" },
-  { label: "Email", href: "mailto:shokavdooren@gmail.com", icon: "✉" },
 ];
 
 export default function Footer() {
@@ -36,9 +30,9 @@ export default function Footer() {
     <footer className="border-t border-white/5 bg-slate-950 pt-16 pb-8 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
         {/* Top row */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-10 mb-14">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-10 mb-14">
           {/* Brand */}
-          <div className="col-span-2 sm:col-span-3 lg:col-span-1">
+          <div className="col-span-2 sm:col-span-1">
             <span className="text-xl font-bold bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
               Clarity AI
             </span>
@@ -81,26 +75,6 @@ export default function Footer() {
                 <li key={key}>
                   <a href={href} className="text-sm text-slate-500 hover:text-teal-400 transition-colors">
                     {f.legal[key]}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Connect */}
-          <div>
-            <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">{f.connect.title}</h4>
-            <ul className="space-y-2.5">
-              {SOCIAL_LINKS.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="flex items-center gap-2 text-sm text-slate-500 hover:text-teal-400 transition-colors"
-                    target={link.href.startsWith("http") ? "_blank" : undefined}
-                    rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  >
-                    <span className="text-xs font-bold w-5 text-center">{link.icon}</span>
-                    <span>{link.label}</span>
                   </a>
                 </li>
               ))}
