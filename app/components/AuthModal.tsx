@@ -2,16 +2,41 @@
 
 import { useState } from "react";
 import { useAuth } from "../lib/AuthContext";
+import { useRouter } from "next/navigation";
 
 type Props = {
   onClose: () => void;
 };
 
 export default function AuthModal({ onClose }: Props) {
-  const { signInWithEmail, user, signOut } = useAuth();
+  const { signInWithEmail, user, isProUser, signOut } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  async function handleManageSubscription() {
+    if (!user) return;
+    setPortalLoading(true);
+    try {
+      const res = await fetch("/api/portal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        router.push(data.url);
+      } else {
+        alert(data.error || "Could not open billing portal.");
+      }
+    } catch {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setPortalLoading(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -47,13 +72,28 @@ export default function AuthModal({ onClose }: Props) {
               <span className="text-teal-400 text-lg">✓</span>
             </div>
             <h2 className="text-lg font-semibold text-white mb-1">Signed in</h2>
-            <p className="text-sm text-slate-400 mb-6 break-all">{user.email}</p>
-            <button
-              onClick={async () => { await signOut(); onClose(); }}
-              className="w-full border border-white/10 text-slate-300 py-2.5 rounded-xl text-sm font-medium hover:bg-white/5 transition-colors"
-            >
-              Sign out
-            </button>
+            <p className="text-sm text-slate-400 mb-1 break-all">{user.email}</p>
+            {isProUser && (
+              <span className="inline-block text-xs bg-teal-500/20 text-teal-400 px-2 py-0.5 rounded-full mb-6">Pro</span>
+            )}
+            {!isProUser && <div className="mb-6" />}
+            <div className="space-y-3">
+              {isProUser && (
+                <button
+                  onClick={handleManageSubscription}
+                  disabled={portalLoading}
+                  className="w-full bg-teal-500/10 border border-teal-500/30 text-teal-400 py-2.5 rounded-xl text-sm font-medium hover:bg-teal-500/20 disabled:opacity-50 transition-colors"
+                >
+                  {portalLoading ? "Opening…" : "Manage subscription →"}
+                </button>
+              )}
+              <button
+                onClick={async () => { await signOut(); onClose(); }}
+                className="w-full border border-white/10 text-slate-300 py-2.5 rounded-xl text-sm font-medium hover:bg-white/5 transition-colors"
+              >
+                Sign out
+              </button>
+            </div>
           </div>
         ) : status === "sent" ? (
           /* Magic link sent */
