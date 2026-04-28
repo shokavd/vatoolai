@@ -6,6 +6,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 export async function POST(req: NextRequest) {
   try {
     const origin = req.headers.get("origin") || "https://vatoolai.com";
+    const body = await req.json().catch(() => ({}));
+    const userId: string | undefined = body.userId;
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
@@ -20,6 +22,7 @@ export async function POST(req: NextRequest) {
       allow_promotion_codes: true,
       automatic_tax: { enabled: true },
       billing_address_collection: "required",
+      ...(userId ? { client_reference_id: userId } : {}),
     });
 
     return NextResponse.json({ url: session.url });

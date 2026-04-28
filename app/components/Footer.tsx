@@ -64,6 +64,11 @@ export default function Footer() {
                   </a>
                 </li>
               ))}
+              <li>
+                <a href="/contact" className="text-sm text-slate-500 hover:text-teal-400 transition-colors">
+                  Contact
+                </a>
+              </li>
             </ul>
           </div>
 

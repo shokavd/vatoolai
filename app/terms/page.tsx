@@ -97,7 +97,7 @@ export default function TermsPage() {
 
       <h2>12. Contact</h2>
       <p>
-        Questions about these Terms? Email <a href="mailto:shokavdooren@gmail.com">shokavdooren@gmail.com</a>.
+        Questions about these Terms? Use our <a href="/contact">contact form</a>.
       </p>
     </StaticPageLayout>
   );

@@ -91,7 +91,7 @@ export default function CookiesPage() {
 
       <h2>Contact</h2>
       <p>
-        Questions? Email <a href="mailto:shokavdooren@gmail.com">shokavdooren@gmail.com</a>.
+        Questions? Use our <a href="/contact">contact form</a>.
       </p>
     </StaticPageLayout>
   );

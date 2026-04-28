@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TranslationProvider } from "./lib/TranslationContext";
+import { AuthProvider } from "./lib/AuthContext";
 import CookieBanner from "./components/CookieBanner";
 
 const geistSans = Geist({
@@ -31,8 +32,10 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <TranslationProvider>
-          {children}
-          <CookieBanner />
+          <AuthProvider>
+            {children}
+            <CookieBanner />
+          </AuthProvider>
         </TranslationProvider>
       </body>
     </html>

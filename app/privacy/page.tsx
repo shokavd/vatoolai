@@ -12,9 +12,7 @@ export default function PrivacyPage() {
       <h2>Who we are</h2>
       <p>
         Clarity AI is operated by Shoka van Dooren, registered in the Netherlands (KvK registration in progress).
-        Contact: <a href="mailto:shokavdooren@gmail.com">shokavdooren@gmail.com</a>
-        <br />
-        For all privacy-related requests, please use this email address.
+        For all privacy-related requests, please use our <a href="/contact">contact form</a>.
       </p>
 
       <h2>What data we collect</h2>
@@ -76,7 +74,7 @@ export default function PrivacyPage() {
       </ul>
       <p>
         Because we store almost no personal data, most requests will be resolved immediately. To exercise any right,
-        email <a href="mailto:shokavdooren@gmail.com">shokavdooren@gmail.com</a>. We will respond within 30 days.
+        use our <a href="/contact">contact form</a>. We will respond within 30 days.
       </p>
       <p>
         You also have the right to lodge a complaint with the Dutch data protection authority:{" "}
@@ -102,7 +100,7 @@ export default function PrivacyPage() {
 
       <h2>Contact</h2>
       <p>
-        Questions about this policy? Email <a href="mailto:shokavdooren@gmail.com">shokavdooren@gmail.com</a>.
+        Questions about this policy? Use our <a href="/contact">contact form</a>.
       </p>
     </StaticPageLayout>
   );

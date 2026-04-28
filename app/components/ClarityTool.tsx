@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 import { MODES, TONES, LANGUAGES, PLATFORMS } from "./tool/modes";
 import { getHistory, saveToHistory, clearHistory, formatTimeAgo, type HistoryItem } from "./tool/history";
 import { useTranslation } from "../lib/TranslationContext";
+import { useAuth } from "../lib/AuthContext";
 
 const FREE_LIMIT = 3;
 const FREE_MAX_CHARS = 5000;
@@ -24,11 +25,6 @@ function incrementUsage(): number {
   const newCount = getUsageCount() + 1;
   localStorage.setItem(getTodayKey(), String(newCount));
   return newCount;
-}
-
-function isPro(): boolean {
-  if (typeof window === "undefined") return false;
-  return localStorage.getItem("clarity_ai_pro") === "true";
 }
 
 function OutputBlock({ text, copyLabel, copiedLabel }: { text: string; copyLabel: string; copiedLabel: string }) {
@@ -93,6 +89,7 @@ function HistoryPanel({ history, onSelect, onClear, ui }: {
 
 export default function ClarityTool() {
   const { t } = useTranslation();
+  const { user, isProUser } = useAuth();
   const ui = t.toolUI;
 
   const [selectedMode, setSelectedMode] = useState(MODES[0]);
@@ -107,15 +104,16 @@ export default function ClarityTool() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState("");
   const [usageCount, setUsageCount] = useState(0);
-  const [proUser, setProUser] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [generateVariations, setGenerateVariations] = useState(false);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(["linkedin"]);
 
+  // isProUser comes from AuthContext (Supabase-backed with localStorage fallback)
+  const proUser = isProUser;
+
   useEffect(() => {
     setUsageCount(getUsageCount());
-    setProUser(isPro());
     setHistory(getHistory());
   }, []);
 
@@ -181,7 +179,11 @@ export default function ClarityTool() {
   async function handleCheckout() {
     setCheckoutLoading(true);
     try {
-      const res = await fetch("/api/checkout", { method: "POST" });
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user?.id }),
+      });
       const data = await res.json();
       if (data.url) window.location.href = data.url;
       else setError(ui.checkoutError);
