@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { MODES, TONES, LANGUAGES, PLATFORMS } from "./tool/modes";
 import { getHistory, saveToHistory, clearHistory, formatTimeAgo, type HistoryItem } from "./tool/history";
 import { useTranslation } from "../lib/TranslationContext";
 import { useAuth } from "../lib/AuthContext";
+import BrandVoicePanel, { loadBrandVoice } from "./BrandVoicePanel";
 
 const FREE_LIMIT = 3;
 const FREE_MAX_CHARS = 5000;
@@ -27,7 +28,12 @@ function incrementUsage(): number {
   return newCount;
 }
 
-function OutputBlock({ text, copyLabel, copiedLabel }: { text: string; copyLabel: string; copiedLabel: string }) {
+function OutputBlock({ text, copyLabel, copiedLabel, onDownloadPdf }: {
+  text: string;
+  copyLabel: string;
+  copiedLabel: string;
+  onDownloadPdf: () => void;
+}) {
   const [copied, setCopied] = useState(false);
   async function handleCopy() {
     await navigator.clipboard.writeText(text);
@@ -39,16 +45,24 @@ function OutputBlock({ text, copyLabel, copiedLabel }: { text: string; copyLabel
       <div className="bg-slate-900/80 border border-white/10 rounded-xl p-5 prose prose-invert prose-sm max-w-none text-slate-200 [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-white/20 [&_th]:bg-slate-800 [&_th]:p-2 [&_th]:text-left [&_td]:border [&_td]:border-white/15 [&_td]:p-2 [&_a]:text-teal-400 [&_code]:bg-slate-800 [&_code]:px-1 [&_code]:rounded">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
       </div>
-      <button
-        onClick={handleCopy}
-        className="mt-2 flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
-      >
-        {copied ? (
-          <><span className="text-teal-400">✓</span><span className="text-teal-400">{copiedLabel}</span></>
-        ) : (
-          <><span>📋</span><span>{copyLabel}</span></>
-        )}
-      </button>
+      <div className="mt-2 flex items-center gap-4">
+        <button
+          onClick={handleCopy}
+          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+        >
+          {copied ? (
+            <><span className="text-teal-400">✓</span><span className="text-teal-400">{copiedLabel}</span></>
+          ) : (
+            <><span>📋</span><span>{copyLabel}</span></>
+          )}
+        </button>
+        <button
+          onClick={onDownloadPdf}
+          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+        >
+          <span>⬇️</span><span>Download PDF</span>
+        </button>
+      </div>
     </div>
   );
 }
@@ -91,6 +105,7 @@ export default function ClarityTool() {
   const { t } = useTranslation();
   const { user, isProUser } = useAuth();
   const ui = t.toolUI;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [selectedMode, setSelectedMode] = useState(MODES[0]);
   const [input, setInput] = useState("");
@@ -109,18 +124,30 @@ export default function ClarityTool() {
   const [generateVariations, setGenerateVariations] = useState(false);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(["linkedin"]);
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+  const [showBrandVoice, setShowBrandVoice] = useState(false);
+  const [brandVoiceSet, setBrandVoiceSet] = useState(false);
 
-  // isProUser comes from AuthContext (Supabase-backed with localStorage fallback)
+  // Refinement state
+  const [refinementInput, setRefinementInput] = useState("");
+  const [refining, setRefining] = useState(false);
+
+  // File upload state
+  const [fileLoading, setFileLoading] = useState(false);
+  const [fileName, setFileName] = useState("");
+
   const proUser = isProUser;
 
   useEffect(() => {
     setUsageCount(getUsageCount());
     setHistory(getHistory());
+    const bv = loadBrandVoice();
+    setBrandVoiceSet(Object.values(bv).some((v) => v.trim().length > 0));
   }, []);
 
   const maxChars = proUser ? PRO_MAX_CHARS : FREE_MAX_CHARS;
   const remaining = Math.max(0, FREE_LIMIT - usageCount);
   const isLimitReached = !proUser && usageCount >= FREE_LIMIT;
+  const currentOutput = outputVariations.length > 0 ? outputVariations[activeVariation] : output;
 
   async function handleProcess() {
     if (!input.trim() || isLimitReached) return;
@@ -133,8 +160,10 @@ export default function ClarityTool() {
     setError("");
     setOutput("");
     setOutputVariations([]);
+    setRefinementInput("");
 
     try {
+      const brandVoice = loadBrandVoice();
       const res = await fetch("/api/process", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -147,6 +176,7 @@ export default function ClarityTool() {
           variations: generateVariations,
           isPro: proUser,
           platforms: selectedMode.id === "social_media" ? selectedPlatforms : undefined,
+          brandVoice: Object.values(brandVoice).some((v) => v.trim()) ? brandVoice : undefined,
         }),
       });
 
@@ -175,6 +205,102 @@ export default function ClarityTool() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleRefine() {
+    if (!refinementInput.trim() || !currentOutput) return;
+    setRefining(true);
+    setError("");
+
+    try {
+      const brandVoice = loadBrandVoice();
+      const res = await fetch("/api/process", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          input: input.trim(),
+          mode: selectedMode.id,
+          tone,
+          language,
+          customInstruction: customInstruction.trim(),
+          isPro: proUser,
+          platforms: selectedMode.id === "social_media" ? selectedPlatforms : undefined,
+          previousOutput: currentOutput,
+          refinement: refinementInput.trim(),
+          brandVoice: Object.values(brandVoice).some((v) => v.trim()) ? brandVoice : undefined,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || ui.networkError); return; }
+
+      if (outputVariations.length > 0) {
+        const updated = [...outputVariations];
+        updated[activeVariation] = data.result;
+        setOutputVariations(updated);
+      } else {
+        setOutput(data.result);
+      }
+      setRefinementInput("");
+    } catch {
+      setError(ui.networkError);
+    } finally {
+      setRefining(false);
+    }
+  }
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setFileLoading(true);
+    setFileName(file.name);
+    setError("");
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/extract-text", { method: "POST", body: formData });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || "Could not read file."); return; }
+      setInput(data.text.slice(0, maxChars));
+    } catch {
+      setError("Could not read file. Please try again.");
+    } finally {
+      setFileLoading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  async function handleDownloadPdf(text: string) {
+    const { jsPDF } = await import("jspdf");
+    const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const margin = 20;
+    const pageWidth = doc.internal.pageSize.getWidth() - margin * 2;
+    const lineHeight = 7;
+    let y = margin;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.setTextColor(30, 30, 30);
+
+    // Strip markdown and split into lines
+    const plain = text
+      .replace(/\*\*(.+?)\*\*/g, "$1")
+      .replace(/\*(.+?)\*/g, "$1")
+      .replace(/#{1,6} /g, "")
+      .replace(/\|/g, " | ")
+      .replace(/^[-*] /gm, "• ");
+
+    const lines = doc.splitTextToSize(plain, pageWidth);
+    for (const line of lines) {
+      if (y > doc.internal.pageSize.getHeight() - margin) {
+        doc.addPage();
+        y = margin;
+      }
+      doc.text(line, margin, y);
+      y += lineHeight;
+    }
+
+    doc.save(`clarity-ai-${selectedMode.id}.pdf`);
   }
 
   async function handleCheckout() {
@@ -209,6 +335,7 @@ export default function ClarityTool() {
     setSelectedMode(mode);
     setOutput("");
     setOutputVariations([]);
+    setRefinementInput("");
     setError("");
   }
 
@@ -217,6 +344,7 @@ export default function ClarityTool() {
     if (mode) setSelectedMode(mode);
     setOutput(item.output);
     setOutputVariations([]);
+    setRefinementInput("");
     setTone(item.tone);
     setLanguage(item.language);
     setShowHistory(false);
@@ -323,8 +451,8 @@ export default function ClarityTool() {
         </div>
       )}
 
-      {/* Tone + Language selectors */}
-      <div className="flex flex-wrap gap-3 mb-3">
+      {/* Tone + Language + Brand voice row */}
+      <div className="flex flex-wrap items-center gap-3 mb-3">
         <div className="flex items-center gap-2">
           <label className="text-xs text-slate-400 font-medium">{ui.tone}</label>
           <select
@@ -349,17 +477,53 @@ export default function ClarityTool() {
             ))}
           </select>
         </div>
+        <button
+          onClick={() => setShowBrandVoice(true)}
+          className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-all ${
+            brandVoiceSet
+              ? "border-teal-500/30 text-teal-400 bg-teal-500/10"
+              : "border-white/10 text-slate-500 hover:text-slate-300 hover:border-white/20"
+          }`}
+        >
+          <span>🎨</span>
+          <span>{brandVoiceSet ? "Brand voice on" : "Brand voice"}</span>
+        </button>
       </div>
 
-      {/* Input */}
-      <textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder={selectedMode.placeholder}
-        rows={8}
-        maxLength={maxChars}
-        className="w-full rounded-xl border border-white/10 p-4 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none bg-slate-900/60"
-      />
+      {/* File upload + Input */}
+      <div className="relative mb-1">
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder={selectedMode.placeholder}
+          rows={8}
+          maxLength={maxChars}
+          className="w-full rounded-xl border border-white/10 p-4 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none bg-slate-900/60"
+        />
+        <div className="absolute bottom-3 right-3 flex items-center gap-2">
+          {fileLoading ? (
+            <span className="text-xs text-slate-500">Reading file…</span>
+          ) : (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".txt,.pdf,.docx"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 bg-white/[0.05] border border-white/10 rounded-lg px-2.5 py-1.5 transition-colors"
+                title="Upload .txt, .pdf, or .docx"
+              >
+                <span>📎</span>
+                <span>{fileName ? fileName.slice(0, 20) + (fileName.length > 20 ? "…" : "") : "Upload file"}</span>
+              </button>
+            </>
+          )}
+        </div>
+      </div>
 
       <div className="flex items-center justify-between mt-1 mb-3">
         <span className="text-xs text-slate-600">
@@ -451,7 +615,12 @@ export default function ClarityTool() {
               </button>
             ))}
           </div>
-          <OutputBlock text={outputVariations[activeVariation]} copyLabel={ui.copy} copiedLabel={ui.copied} />
+          <OutputBlock
+            text={outputVariations[activeVariation]}
+            copyLabel={ui.copy}
+            copiedLabel={ui.copied}
+            onDownloadPdf={() => handleDownloadPdf(outputVariations[activeVariation])}
+          />
         </div>
       )}
 
@@ -459,7 +628,40 @@ export default function ClarityTool() {
       {output && !outputVariations.length && (
         <div className="mt-6">
           <h3 className="font-semibold text-slate-200 mb-3">{ui.result}</h3>
-          <OutputBlock text={output} copyLabel={ui.copy} copiedLabel={ui.copied} />
+          <OutputBlock
+            text={output}
+            copyLabel={ui.copy}
+            copiedLabel={ui.copied}
+            onDownloadPdf={() => handleDownloadPdf(output)}
+          />
+        </div>
+      )}
+
+      {/* Refinement box — shown after any output */}
+      {currentOutput && (
+        <div className="mt-4 p-4 bg-white/[0.03] border border-white/8 rounded-xl">
+          <p className="text-xs font-medium text-slate-400 mb-2">Refine this output</p>
+          <div className="flex gap-2">
+            <input
+              value={refinementInput}
+              onChange={(e) => setRefinementInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleRefine(); } }}
+              placeholder='e.g. "Make it shorter", "Add a section about pricing", "More formal tone"'
+              className="flex-1 bg-white/[0.04] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <button
+              onClick={handleRefine}
+              disabled={refining || !refinementInput.trim()}
+              className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-500 disabled:opacity-50 transition-colors"
+            >
+              {refining ? (
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              ) : "Refine →"}
+            </button>
+          </div>
         </div>
       )}
 
@@ -490,6 +692,17 @@ export default function ClarityTool() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Brand voice panel */}
+      {showBrandVoice && (
+        <BrandVoicePanel
+          onClose={() => {
+            setShowBrandVoice(false);
+            const bv = loadBrandVoice();
+            setBrandVoiceSet(Object.values(bv).some((v) => v.trim().length > 0));
+          }}
+        />
       )}
 
       {/* History */}

@@ -92,9 +92,174 @@ Write in professional HR language.`,
 **Questions to Ask** (things worth clarifying before signing)
 
 Write as if explaining to a smart friend with no legal background.`,
+
+  linkedin_bio: `You receive information about a person's role, experience, and goals. Write a compelling LinkedIn About section using markdown:
+
+**LinkedIn About Section** (ready to copy-paste, 3-4 short paragraphs):
+- Paragraph 1: Hook — who they are and what they do (not a job title repeat)
+- Paragraph 2: What they bring / their expertise and results
+- Paragraph 3: What they're focused on or looking for
+- Paragraph 4: Personal touch + call to action (connect, DM, etc.)
+
+Use first person. Keep it human, not corporate. Under 300 words.`,
+
+  cold_email: `You receive information about who to email, the offer, and the desired action. Write a 3-part cold email sequence using markdown:
+
+**Email 1 — The Introduction** (subject line + body, 80-100 words)
+- Lead with value, not a pitch
+- One clear ask at the end
+
+**Email 2 — The Follow-up** (3-5 days later, 50-70 words)
+- Reference Email 1 briefly
+- Add a new piece of value or insight
+- Softer ask
+
+**Email 3 — The Breakup** (5-7 days later, 30-40 words)
+- Light, no pressure
+- Leave the door open
+
+Make each email feel personal and human, not templated.`,
+
+  job_description: `You receive details about a role and company. Write a complete job description using markdown:
+
+**[Job Title]**
+
+**About the role** (2-3 sentences — what this person will actually do and why it matters)
+
+**What you'll do** (5-7 bullet points, specific responsibilities)
+
+**What we're looking for** (must-haves as bullets, then nice-to-haves separately)
+
+**What we offer** (benefits, culture, growth — based on input or use sensible defaults)
+
+**How to apply** (brief closing line)
+
+Make it sound like a real company wrote it, not a generic HR template.`,
+
+  star_story: `You receive a situation or achievement to turn into an interview answer. Write a STAR-format story using markdown:
+
+**STAR Interview Answer**
+
+**Situation** (2-3 sentences — set the scene, give context)
+**Task** (1-2 sentences — what was your specific responsibility)
+**Action** (3-5 sentences — what YOU did, step by step. Use "I", not "we")
+**Result** (2-3 sentences — quantify if possible, what changed because of your actions)
+
+**Short version** (under 60 words — for when they ask a quick follow-up)
+
+Keep it natural and conversational, not robotic.`,
+
+  press_release: `You receive details about an announcement. Write a professional press release using markdown:
+
+**[HEADLINE IN CAPS]**
+**Subheadline** (one punchy line expanding the headline)
+
+[City, Date] — **Lead paragraph** (who, what, when, where, why in 2-3 sentences)
+
+**Body paragraph 1** (expand on the announcement, key details)
+**Body paragraph 2** (quote from a key person — invent a realistic one if not provided)
+**Body paragraph 3** (background on the company/context)
+
+**About [Company]** (2-3 sentence boilerplate)
+
+**Contact:**
+[Name] | [Email] | [Phone]
+
+###
+
+Standard AP style. Professional and factual.`,
+
+  product_description: `You receive product details. Write persuasive product copy using markdown:
+
+**Product Name**
+
+**Hero line** (one punchy sentence — the product's main promise)
+
+**Description** (2-3 sentences — what it is, who it's for, why it's different)
+
+**Key benefits** (3-5 bullet points — benefits, not features. What the customer gets)
+
+**Features** (quick bullet list of specs/features)
+
+**Who it's for** (1-2 sentences on the ideal customer)
+
+**Call to action** (one line)
+
+Focus on benefits over features. Make the reader feel they need this.`,
+
+  complaint_letter: `You receive details about a complaint situation. Write a formal complaint letter using markdown:
+
+**[Your Name]**
+**[Date]**
+
+**To:** [Company/Person — from input]
+**Re:** [Brief subject — from input]
+
+**Opening paragraph** — State clearly what happened and when.
+**Body paragraph** — Explain the impact and any attempts to resolve it already made.
+**Closing paragraph** — State clearly what resolution you expect and by when.
+
+**Yours sincerely,**
+**[Name]**
+
+Keep it firm, factual, and professional. No emotional language. Specific dates and facts only.`,
+
+  blog_outline: `You receive a blog topic, audience, and key points. Create a detailed blog outline using markdown:
+
+**Title options** (3 variations — one listicle, one question, one statement)
+
+**Recommended title:** [pick the strongest]
+
+**Meta description** (under 155 characters, for SEO)
+
+**Intro hook** (2-3 sentence description of how to open — not the full intro)
+
+**Outline:**
+## H2: [Section title]
+- Subpoint
+- Subpoint
+
+(Repeat for each major section — aim for 4-6 H2s)
+
+**Conclusion** (brief description of how to close + CTA suggestion)
+
+**Suggested internal links / related topics:** (2-3 ideas)`,
+
+  interview_prep: `You receive a job description and the candidate's experience. Output using markdown:
+
+**Role Analysis** (what they're really looking for in 3 bullets)
+
+**Likely Interview Questions** with suggested answers:
+
+For each question:
+### Q: [Question]
+**Answer:** [Tailored 3-5 sentence answer using their experience]
+
+Cover: 2 behavioral questions, 2 role-specific questions, 1 culture/motivation question, 1 tough question they should prepare for.
+
+**Questions to ask the interviewer** (3 smart questions based on the role)`,
 };
 
-function buildSystemPrompt(mode: string, tone: string, language: string, customInstruction?: string, platforms?: string[]): string {
+function buildBrandVoiceContext(brandVoice?: Record<string, string>): string {
+  if (!brandVoice) return "";
+  const parts = [];
+  if (brandVoice.name) parts.push(`Author's name: ${brandVoice.name}`);
+  if (brandVoice.company) parts.push(`Company/brand: ${brandVoice.company}`);
+  if (brandVoice.industry) parts.push(`Industry: ${brandVoice.industry}`);
+  if (brandVoice.audience) parts.push(`Target audience: ${brandVoice.audience}`);
+  if (brandVoice.styleNotes) parts.push(`Writing style: ${brandVoice.styleNotes}`);
+  if (parts.length === 0) return "";
+  return `\n\nUser context (apply this throughout your response):\n${parts.join("\n")}`;
+}
+
+function buildSystemPrompt(
+  mode: string,
+  tone: string,
+  language: string,
+  customInstruction?: string,
+  platforms?: string[],
+  brandVoice?: Record<string, string>
+): string {
   const toneInstructions: Record<string, string> = {
     professional: "Use a professional, formal tone throughout.",
     casual: "Use a casual, relaxed tone — like writing to a colleague you know well.",
@@ -105,9 +270,10 @@ function buildSystemPrompt(mode: string, tone: string, language: string, customI
 
   const toneNote = tone && tone !== "professional" ? `\n\nTone: ${toneInstructions[tone] || ""}` : "";
   const languageNote = language && language !== "English" ? `\n\nIMPORTANT: Write your entire response in ${language}.` : "";
+  const brandNote = buildBrandVoiceContext(brandVoice);
 
   if (mode === "custom" && customInstruction) {
-    return `Follow this instruction exactly:\n\n${customInstruction}${toneNote}${languageNote}`;
+    return `Follow this instruction exactly:\n\n${customInstruction}${brandNote}${toneNote}${languageNote}`;
   }
 
   if (mode === "social_media" && platforms && platforms.length > 0) {
@@ -123,16 +289,16 @@ function buildSystemPrompt(mode: string, tone: string, language: string, customI
       newsletter: "**Newsletter Intro** (warm, personal, 80-120 words — draws readers into the full email)",
     };
     const selectedPrompts = platforms.map((p: string) => platformPrompts[p]).filter(Boolean).join("\n");
-    return `You receive content, an idea, or a topic. Create platform-ready social media posts using markdown. Write ONLY the platforms listed below — nothing else:\n\n${selectedPrompts}\n\nMake each post feel completely native to its platform.${toneNote}${languageNote}`;
+    return `You receive content, an idea, or a topic. Create platform-ready social media posts using markdown. Write ONLY the platforms listed below — nothing else:\n\n${selectedPrompts}\n\nMake each post feel completely native to its platform.${brandNote}${toneNote}${languageNote}`;
   }
 
   const base = modePrompts[mode] || modePrompts["cleanup"];
-  return `${base}${toneNote}${languageNote}`;
+  return `${base}${brandNote}${toneNote}${languageNote}`;
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const { input, mode, tone, language, customInstruction, variations, isPro, platforms } = await req.json();
+    const { input, mode, tone, language, customInstruction, variations, isPro, platforms, refinement, previousOutput, brandVoice } = await req.json();
 
     if (!input || typeof input !== "string" || input.trim().length === 0) {
       return NextResponse.json({ error: "Input is required." }, { status: 400 });
@@ -150,25 +316,41 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid mode." }, { status: 400 });
     }
 
-    const systemPrompt = buildSystemPrompt(mode, tone, language, customInstruction, platforms);
+    const systemPrompt = buildSystemPrompt(mode, tone, language, customInstruction, platforms, brandVoice);
+
+    // Refinement mode — iterative follow-up on existing output
+    if (refinement && previousOutput) {
+      const message = await client.messages.create({
+        model: "claude-sonnet-4-6",
+        max_tokens: 2000,
+        system: systemPrompt,
+        messages: [
+          { role: "user", content: input },
+          { role: "assistant", content: previousOutput },
+          { role: "user", content: `Please refine the above output with this instruction: ${refinement}` },
+        ],
+      });
+      const result = message.content[0].type === "text" ? message.content[0].text : "";
+      return NextResponse.json({ result });
+    }
 
     if (variations) {
       const [v1, v2, v3] = await Promise.all([
         client.messages.create({
           model: "claude-sonnet-4-6",
-          max_tokens: 1500,
+          max_tokens: 2000,
           system: systemPrompt + "\n\nThis is Variation 1. Be slightly more concise than usual.",
           messages: [{ role: "user", content: input }],
         }),
         client.messages.create({
           model: "claude-sonnet-4-6",
-          max_tokens: 1500,
+          max_tokens: 2000,
           system: systemPrompt + "\n\nThis is Variation 2. Take a slightly different angle or structure than you normally would.",
           messages: [{ role: "user", content: input }],
         }),
         client.messages.create({
           model: "claude-sonnet-4-6",
-          max_tokens: 1500,
+          max_tokens: 2000,
           system: systemPrompt + "\n\nThis is Variation 3. Be slightly more detailed and thorough than usual.",
           messages: [{ role: "user", content: input }],
         }),
@@ -185,7 +367,7 @@ export async function POST(req: NextRequest) {
 
     const message = await client.messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 1500,
+      max_tokens: 2000,
       system: systemPrompt,
       messages: [{ role: "user", content: input }],
     });

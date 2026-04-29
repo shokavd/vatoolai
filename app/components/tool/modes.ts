@@ -8,6 +8,7 @@ export type Mode = {
 };
 
 export const MODES: Mode[] = [
+  // --- Original modes ---
   {
     id: "meeting_notes",
     label: "Meeting Notes",
@@ -77,6 +78,75 @@ export const MODES: Mode[] = [
     icon: "⚖️",
     placeholder: "Paste any legal text, contract clause, terms & conditions, or policy...",
     description: "Get a plain-English summary of what it actually means",
+  },
+
+  // --- New modes ---
+  {
+    id: "linkedin_bio",
+    label: "LinkedIn Bio",
+    icon: "🔗",
+    placeholder: "Paste your current LinkedIn bio or describe your role, experience, and what you want to be known for...",
+    description: "A compelling LinkedIn About section that gets you noticed",
+  },
+  {
+    id: "cold_email",
+    label: "Cold Email",
+    icon: "📬",
+    placeholder: "Describe who you're emailing, what you're offering, and what you want them to do...",
+    description: "A 3-part cold email sequence that gets replies",
+    proOnly: true,
+  },
+  {
+    id: "job_description",
+    label: "Job Description",
+    icon: "📝",
+    placeholder: "Describe the role, responsibilities, required skills, and your company...",
+    description: "A clear, attractive job posting that draws the right candidates",
+  },
+  {
+    id: "star_story",
+    label: "STAR Story",
+    icon: "🌟",
+    placeholder: "Describe a situation or achievement you want to turn into an interview answer...",
+    description: "Turn any experience into a powerful interview answer using the STAR format",
+  },
+  {
+    id: "press_release",
+    label: "Press Release",
+    icon: "📰",
+    placeholder: "Describe what you're announcing — product launch, partnership, milestone, event...",
+    description: "A professional press release ready to send to journalists",
+    proOnly: true,
+  },
+  {
+    id: "product_description",
+    label: "Product Description",
+    icon: "🛍️",
+    placeholder: "Describe your product — what it is, who it's for, key features, and benefits...",
+    description: "Persuasive product copy that converts browsers into buyers",
+  },
+  {
+    id: "complaint_letter",
+    label: "Complaint Letter",
+    icon: "📮",
+    placeholder: "Describe the situation — what happened, who it involves, and what outcome you want...",
+    description: "A firm, professional complaint letter that gets results",
+  },
+  {
+    id: "blog_outline",
+    label: "Blog Outline",
+    icon: "📖",
+    placeholder: "Describe your blog topic, target audience, and the main points you want to cover...",
+    description: "A structured blog post outline with headings, subpoints, and intro/outro hooks",
+    proOnly: true,
+  },
+  {
+    id: "interview_prep",
+    label: "Interview Prep",
+    icon: "🎯",
+    placeholder: "Paste the job description and your relevant experience. Include any specific areas you're worried about...",
+    description: "Likely interview questions + tailored answers based on the role",
+    proOnly: true,
   },
   {
     id: "custom",
