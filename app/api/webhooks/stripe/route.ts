@@ -37,16 +37,33 @@ export async function POST(req: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session;
     const userId = session.client_reference_id;
     const customerId = typeof session.customer === "string" ? session.customer : null;
+    const email = session.customer_details?.email ?? null;
 
-    if (userId && supabase) {
-      await supabase
-        .from("profiles")
-        .upsert({
+    if (supabase) {
+      if (userId) {
+        // User was signed in — link directly by Supabase user ID
+        await supabase.from("profiles").upsert({
           id: userId,
           stripe_customer_id: customerId,
           is_pro: true,
-          email: session.customer_details?.email ?? null,
+          email,
         });
+      } else if (email) {
+        // User paid without signing in — try to find them by email
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("email", email)
+          .single();
+
+        if (profile) {
+          await supabase.from("profiles")
+            .update({ stripe_customer_id: customerId, is_pro: true })
+            .eq("id", profile.id);
+        }
+        // If no profile found, they'll get Pro via localStorage on the success page
+        // and can sign in later with the same email to sync
+      }
     }
   }
 

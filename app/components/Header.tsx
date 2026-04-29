@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "../lib/TranslationContext";
 import { useAuth } from "../lib/AuthContext";
 import { type Locale } from "../lib/translations";
@@ -24,6 +24,12 @@ export default function Header() {
   const { t, locale, setLocale } = useTranslation();
   const { user, isProUser } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setShowAuth(true);
+    document.addEventListener("open-auth-modal", handler);
+    return () => document.removeEventListener("open-auth-modal", handler);
+  }, []);
 
   return (
     <>

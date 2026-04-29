@@ -108,6 +108,7 @@ export default function ClarityTool() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [generateVariations, setGenerateVariations] = useState(false);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(["linkedin"]);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
 
   // isProUser comes from AuthContext (Supabase-backed with localStorage fallback)
   const proUser = isProUser;
@@ -177,7 +178,16 @@ export default function ClarityTool() {
   }
 
   async function handleCheckout() {
+    if (!user) {
+      setShowSignInPrompt(true);
+      return;
+    }
+    await startCheckout();
+  }
+
+  async function startCheckout() {
     setCheckoutLoading(true);
+    setShowSignInPrompt(false);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
@@ -450,6 +460,35 @@ export default function ClarityTool() {
         <div className="mt-6">
           <h3 className="font-semibold text-slate-200 mb-3">{ui.result}</h3>
           <OutputBlock text={output} copyLabel={ui.copy} copiedLabel={ui.copied} />
+        </div>
+      )}
+
+      {/* Sign-in prompt before checkout */}
+      {showSignInPrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4" onClick={() => setShowSignInPrompt(false)}>
+          <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" />
+          <div className="relative w-full max-w-sm bg-slate-900 border border-white/10 rounded-2xl p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-lg font-semibold text-white mb-2">Sign in before upgrading</h2>
+            <p className="text-sm text-slate-400 mb-6">
+              Signing in links your Pro subscription to your account so it works on any device — not just this browser.
+            </p>
+            <div className="space-y-3">
+              <a
+                href="#"
+                onClick={(e) => { e.preventDefault(); setShowSignInPrompt(false); document.dispatchEvent(new CustomEvent("open-auth-modal")); }}
+                className="block w-full text-center bg-teal-500 text-slate-950 font-semibold py-3 rounded-xl hover:bg-teal-400 transition-colors text-sm"
+              >
+                Sign in first →
+              </a>
+              <button
+                onClick={startCheckout}
+                disabled={checkoutLoading}
+                className="w-full border border-white/10 text-slate-400 py-2.5 rounded-xl text-sm hover:bg-white/5 transition-colors disabled:opacity-50"
+              >
+                {checkoutLoading ? "Redirecting…" : "Continue without account"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
