@@ -25,7 +25,7 @@ export default function TermsPage() {
       <h2>3. Pro subscription</h2>
       <p>
         Pro access is offered at <strong>€9 per month</strong> and provides unlimited usage, all 20 modes, multiple
-        platform social media, 15,000 character input, file upload, PDF &amp; Word export, result history, and 3 variations per request.
+        platform social media, 30,000 character input, file upload, PDF &amp; Word export, result history, and 3 variations per request.
       </p>
       <ul>
         <li>Subscriptions are billed monthly via Stripe</li>

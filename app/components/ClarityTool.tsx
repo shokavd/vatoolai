@@ -12,7 +12,7 @@ import BrandVoicePanel, { loadBrandVoice } from "./BrandVoicePanel";
 const FREE_LIMIT = 3;
 const FREE_UPLOAD_LIMIT = 1;
 const FREE_MAX_CHARS = 5000;
-const PRO_MAX_CHARS = 15000;
+const PRO_MAX_CHARS = 30000;
 
 function getTodayKey() {
   return `clarity_ai_usage_${new Date().toISOString().slice(0, 10)}`;

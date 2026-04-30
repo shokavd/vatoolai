@@ -4,7 +4,7 @@ import Anthropic from "@anthropic-ai/sdk";
 const client = new Anthropic();
 
 const FREE_MAX_CHARS = 5000;
-const PRO_MAX_CHARS = 15000;
+const PRO_MAX_CHARS = 30000;
 
 const modePrompts: Record<string, string> = {
   meeting_notes: `You receive raw meeting notes. Structure them clearly using markdown:
