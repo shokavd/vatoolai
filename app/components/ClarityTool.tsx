@@ -624,7 +624,7 @@ export default function ClarityTool() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={selectedMode.placeholder}
-          rows={8}
+          rows={proUser ? 14 : 8}
           maxLength={maxChars}
           className="w-full rounded-xl border border-white/10 p-4 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none bg-slate-900/60"
         />
