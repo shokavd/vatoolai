@@ -17,7 +17,7 @@ export async function generateMetadata({
   const article = getArticle(slug);
   if (!article) return {};
   return {
-    title: `${article.title} — Clarity AI Blog`,
+    title: `${article.title} — Tidify AI Blog`,
     description: article.excerpt,
   };
 }

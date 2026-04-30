@@ -7,17 +7,17 @@ export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem("clarity_ai_consent");
+    const consent = localStorage.getItem("tidify_ai_consent");
     if (!consent) setVisible(true);
   }, []);
 
   function accept() {
-    localStorage.setItem("clarity_ai_consent", "all");
+    localStorage.setItem("tidify_ai_consent", "all");
     setVisible(false);
   }
 
   function necessary() {
-    localStorage.setItem("clarity_ai_consent", "necessary");
+    localStorage.setItem("tidify_ai_consent", "necessary");
     setVisible(false);
   }
 

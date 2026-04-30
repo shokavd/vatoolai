@@ -51,7 +51,7 @@ export default function AuthCallbackPage() {
               <span className="text-teal-400 text-3xl">✓</span>
             </div>
             <h1 className="text-xl font-semibold text-white mb-2">You&apos;re signed in!</h1>
-            <p className="text-sm text-slate-400">Taking you back to Clarity AI…</p>
+            <p className="text-sm text-slate-400">Taking you back to Tidify AI…</p>
           </>
         )}
         {status === "error" && (
@@ -65,7 +65,7 @@ export default function AuthCallbackPage() {
               href="/"
               className="inline-block bg-teal-500 text-slate-950 font-semibold px-6 py-3 rounded-xl hover:bg-teal-400 transition-colors text-sm"
             >
-              Back to Clarity AI
+              Back to Tidify AI
             </a>
           </>
         )}

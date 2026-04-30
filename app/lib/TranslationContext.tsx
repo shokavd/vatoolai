@@ -19,13 +19,13 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("en");
 
   useEffect(() => {
-    const saved = localStorage.getItem("clarity_ai_locale") as Locale | null;
+    const saved = localStorage.getItem("tidify_ai_locale") as Locale | null;
     if (saved && translations[saved]) setLocaleState(saved);
   }, []);
 
   function setLocale(newLocale: Locale) {
     setLocaleState(newLocale);
-    localStorage.setItem("clarity_ai_locale", newLocale);
+    localStorage.setItem("tidify_ai_locale", newLocale);
   }
 
   return (

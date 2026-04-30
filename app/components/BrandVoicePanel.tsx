@@ -11,7 +11,7 @@ export type BrandVoice = {
 };
 
 const EMPTY: BrandVoice = { name: "", company: "", industry: "", audience: "", styleNotes: "" };
-const STORAGE_KEY = "clarity_ai_brand_voice";
+const STORAGE_KEY = "tidify_ai_brand_voice";
 
 export function loadBrandVoice(): BrandVoice {
   if (typeof window === "undefined") return EMPTY;

@@ -1,18 +1,18 @@
 import StaticPageLayout from "../components/StaticPageLayout";
 
-export const metadata = { title: "Terms of Service — Clarity AI" };
+export const metadata = { title: "Terms of Service — Tidify AI" };
 
 export default function TermsPage() {
   return (
     <StaticPageLayout
       title="Terms of Service"
-      subtitle="By using Clarity AI, you agree to these terms. Please read them carefully."
+      subtitle="By using Tidify AI, you agree to these terms. Please read them carefully."
       lastUpdated="28 April 2026"
     >
       <h2>1. The service</h2>
       <p>
-        Clarity AI (&quot;the Service&quot;) is operated by Shoka van Dooren (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;), based in the Netherlands.
-        The Service provides AI-powered text processing at vatoolai.com. By accessing or using the Service,
+        Tidify AI (&quot;the Service&quot;) is operated by Shoka van Dooren (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;), based in the Netherlands.
+        The Service provides AI-powered text processing at tidifyai.com. By accessing or using the Service,
         you agree to be bound by these Terms of Service.
       </p>
 

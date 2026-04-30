@@ -153,7 +153,7 @@ export const MODES: Mode[] = [
     label: "Custom",
     icon: "🛠️",
     placeholder: "Paste your content here...",
-    description: "Write your own instruction — Clarity AI follows it exactly",
+    description: "Write your own instruction — Tidify AI follows it exactly",
     proOnly: true,
   },
 ];

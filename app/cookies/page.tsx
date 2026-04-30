@@ -1,6 +1,6 @@
 import StaticPageLayout from "../components/StaticPageLayout";
 
-export const metadata = { title: "Cookie Policy — Clarity AI" };
+export const metadata = { title: "Cookie Policy — Tidify AI" };
 
 export default function CookiesPage() {
   return (
@@ -25,28 +25,28 @@ export default function CookiesPage() {
 
       <h2>What we store in localStorage</h2>
 
-      <h3>clarity_ai_consent</h3>
+      <h3>tidify_ai_consent</h3>
       <p>
         <strong>Purpose:</strong> stores your cookie/consent choice (&quot;all&quot; or &quot;necessary&quot;).<br />
         <strong>Duration:</strong> until you clear your browser data.<br />
         <strong>Category:</strong> Strictly necessary
       </p>
 
-      <h3>clarity_ai_locale</h3>
+      <h3>tidify_ai_locale</h3>
       <p>
         <strong>Purpose:</strong> remembers your chosen language so the site displays correctly next visit.<br />
         <strong>Duration:</strong> until you clear your browser data.<br />
         <strong>Category:</strong> Functional
       </p>
 
-      <h3>clarity_ai_pro</h3>
+      <h3>tidify_ai_pro</h3>
       <p>
         <strong>Purpose:</strong> stores whether you have an active Pro subscription so the tool unlocks Pro features.<br />
         <strong>Duration:</strong> until you clear your browser data or log out.<br />
         <strong>Category:</strong> Strictly necessary (for Pro users)
       </p>
 
-      <h3>clarity_ai_usage_[YYYY-MM-DD]</h3>
+      <h3>tidify_ai_usage_[YYYY-MM-DD]</h3>
       <p>
         <strong>Purpose:</strong> tracks how many requests you have made today to enforce the 3-per-day free limit.
         Each day creates a new key; old keys are inert and can be cleared.<br />
@@ -54,7 +54,7 @@ export default function CookiesPage() {
         <strong>Category:</strong> Strictly necessary
       </p>
 
-      <h3>clarity_ai_history</h3>
+      <h3>tidify_ai_history</h3>
       <p>
         <strong>Purpose:</strong> stores your last 5 (free) or 20 (Pro) results so you can revisit them.<br />
         <strong>Duration:</strong> until you clear history in the tool or clear browser data.<br />

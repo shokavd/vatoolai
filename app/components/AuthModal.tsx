@@ -108,7 +108,7 @@ export default function AuthModal({ onClose }: Props) {
         ) : (
           /* Sign in form */
           <>
-            <h2 className="text-lg font-semibold text-white mb-1">Sign in to Clarity AI</h2>
+            <h2 className="text-lg font-semibold text-white mb-1">Sign in to Tidify AI</h2>
             <p className="text-sm text-slate-400 mb-6">
               Enter your email and we&apos;ll send you a magic link. No password needed.
             </p>

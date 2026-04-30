@@ -5,7 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(req: NextRequest) {
-  const origin = req.headers.get("origin") || "https://vatoolai.com";
+  const origin = req.headers.get("origin") || "https://tidifyai.com";
 
   try {
     const { userId } = await req.json();

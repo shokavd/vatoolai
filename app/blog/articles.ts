@@ -33,7 +33,7 @@ A useful summary has four parts:
 
 ## Using AI to do the heavy lifting
 
-This is where Clarity AI's Meeting Notes mode shines. You paste your raw notes — even if they're chaotic, filled with typos, or stream-of-consciousness — and the AI structures them into the four components above.
+This is where Tidify AI's Meeting Notes mode shines. You paste your raw notes — even if they're chaotic, filled with typos, or stream-of-consciousness — and the AI structures them into the four components above.
 
 The key insight: you don't need perfect input. The messier your notes, the more value the AI adds. Its job is to extract signal from noise.
 
@@ -48,7 +48,7 @@ The key insight: you don't need perfect input. The messier your notes, the more 
 **Before (raw notes):**
 > kickoff call - sarah + dev team - product launch timeline - need landing page by may - tom owns design - backend api still wfh - maybe delay? sarah says no - marketing needs 2 weeks lead - budget tbd - followup next tuesday
 
-**After (Clarity AI output):**
+**After (Tidify AI output):**
 
 **Summary:** Product launch kickoff — team aligned on May deadline, outstanding questions on backend API readiness and budget.
 
@@ -98,7 +98,7 @@ It's a lot. So people don't. The brain dump sits in a note, never looked at agai
 
 ## Let AI do the sorting
 
-Clarity AI's Brain Dump mode is built exactly for this. You paste your raw, unfiltered brain dump and it extracts:
+Tidify AI's Brain Dump mode is built exactly for this. You paste your raw, unfiltered brain dump and it extracts:
 
 - **Main Goal** — What is this really about? What's the underlying thing you're trying to achieve?
 - **Key Themes** — Groups of related ideas or concerns
@@ -118,7 +118,7 @@ Set a timer for 10 minutes. Write without stopping. Include:
 
 Don't organise as you go. Don't re-read. Don't delete. Just write.
 
-When the timer goes off, stop. Paste it all into Clarity AI.
+When the timer goes off, stop. Paste it all into Tidify AI.
 
 ## After the AI processes it
 
@@ -165,7 +165,7 @@ A good cover letter does three things:
 
 ## Using AI as a starting point
 
-Clarity AI's Cover Letter mode works differently from most AI writing tools. Instead of generating a generic letter, it:
+Tidify AI's Cover Letter mode works differently from most AI writing tools. Instead of generating a generic letter, it:
 
 1. Reads the job description you paste
 2. Extracts the key requirements and what the company is actually looking for
@@ -191,7 +191,7 @@ Subject line (if emailing): "[Role] application — [Your Name]". Clean, no crea
 
 ## One more thing
 
-Read the job description twice before pasting it into Clarity AI. The AI will miss nuance you'd catch — for example, if the company mentions a specific tool or methodology they use, make sure the cover letter addresses it explicitly.
+Read the job description twice before pasting it into Tidify AI. The AI will miss nuance you'd catch — for example, if the company mentions a specific tool or methodology they use, make sure the cover letter addresses it explicitly.
 
 The best use of AI in job applications isn't to automate the process — it's to get past the blank page faster so you can focus on the parts that actually require you.
     `.trim(),
@@ -214,13 +214,13 @@ This works, but it misses the more interesting benefits. Here are five ways AI c
 
 Before you can paste an email into AI for improvement, you have to have some idea of what you want. This forces a moment of intentionality that many emails skip.
 
-When you use Clarity AI's Email Reply mode, you paste the email you received and the AI extracts: what they're actually asking, the key context, and a suggested reply. Reading that extraction often shows you that the email was more complex than you realised — or simpler.
+When you use Tidify AI's Email Reply mode, you paste the email you received and the AI extracts: what they're actually asking, the key context, and a suggested reply. Reading that extraction often shows you that the email was more complex than you realised — or simpler.
 
 ## 2. Catch tone mismatches
 
 When you're frustrated, tired, or rushed, your emails can read as curt or passive-aggressive even when you don't intend them to. AI is useful for tone-checking: paste your draft and ask for a "professional" or "friendly" version. The difference often reveals something about your original tone you didn't notice.
 
-The tone selector in Clarity AI (Professional, Casual, Friendly, Direct, Creative) is particularly useful for this. Pick a tone that matches the relationship and the stakes.
+The tone selector in Tidify AI (Professional, Casual, Friendly, Direct, Creative) is particularly useful for this. Pick a tone that matches the relationship and the stakes.
 
 ## 3. Reduce the cognitive load of complex replies
 

@@ -34,7 +34,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 sm:col-span-1">
             <span className="text-xl font-bold bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-              Clarity AI
+              Tidify AI
             </span>
             <p className="mt-3 text-sm text-slate-500 leading-relaxed max-w-xs">{f.tagline}</p>
           </div>

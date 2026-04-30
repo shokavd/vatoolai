@@ -19,7 +19,7 @@ export default function StaticPageLayout({
       <header className="border-b border-white/5 px-4 sm:px-6 h-16 flex items-center">
         <div className="max-w-3xl mx-auto w-full flex items-center justify-between">
           <Link href="/" className="text-lg font-bold bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-            Clarity AI
+            Tidify AI
           </Link>
           <Link href="/" className="text-sm text-slate-400 hover:text-teal-400 transition-colors">
             ← Back to home
@@ -43,7 +43,7 @@ export default function StaticPageLayout({
 
       {/* Footer */}
       <footer className="border-t border-white/5 py-6 px-4 sm:px-6 text-center">
-        <p className="text-xs text-slate-700">© {new Date().getFullYear()} Clarity AI · vatoolai.com</p>
+        <p className="text-xs text-slate-700">© {new Date().getFullYear()} Tidify AI · tidifyai.com</p>
       </footer>
     </div>
   );

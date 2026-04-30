@@ -5,7 +5,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(req: NextRequest) {
   try {
-    const origin = req.headers.get("origin") || "https://vatoolai.com";
+    const origin = req.headers.get("origin") || "https://tidifyai.com";
     const body = await req.json().catch(() => ({}));
     const userId: string | undefined = body.userId;
 

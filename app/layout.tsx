@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Clarity AI — Turn Chaos Into Clarity",
+  title: "Tidify AI — Turn Chaos Into Clarity",
   description: "Paste any messy text. Get back something useful.",
 };
 

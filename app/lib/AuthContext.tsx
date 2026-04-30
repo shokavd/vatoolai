@@ -28,7 +28,7 @@ const AuthContext = createContext<AuthState>({
 
 function getLocalPro() {
   if (typeof window === "undefined") return false;
-  return localStorage.getItem("clarity_ai_pro") === "true";
+  return localStorage.getItem("tidify_ai_pro") === "true";
 }
 
 async function fetchIsPro(userId: string): Promise<boolean> {
@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser({ id: sessionUser.id, email: sessionUser.email ?? null });
     const isPro = await fetchIsPro(sessionUser.id);
     setIsProUser(isPro);
-    localStorage.setItem("clarity_ai_pro", isPro ? "true" : "false");
+    localStorage.setItem("tidify_ai_pro", isPro ? "true" : "false");
   }
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     const isPro = await fetchIsPro(user.id);
     setIsProUser(isPro);
-    localStorage.setItem("clarity_ai_pro", isPro ? "true" : "false");
+    localStorage.setItem("tidify_ai_pro", isPro ? "true" : "false");
   }
 
   async function signInWithEmail(email: string): Promise<{ error?: string }> {

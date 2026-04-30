@@ -15,7 +15,7 @@ const FREE_MAX_CHARS = 5000;
 const PRO_MAX_CHARS = 30000;
 
 function getTodayKey() {
-  return `clarity_ai_usage_${new Date().toISOString().slice(0, 10)}`;
+  return `tidify_ai_usage_${new Date().toISOString().slice(0, 10)}`;
 }
 
 function getUsageCount(): number {
@@ -30,7 +30,7 @@ function incrementUsage(): number {
 }
 
 function getUploadKey() {
-  return `clarity_ai_uploads_${new Date().toISOString().slice(0, 10)}`;
+  return `tidify_ai_uploads_${new Date().toISOString().slice(0, 10)}`;
 }
 
 function getUploadCount(): number {
@@ -342,7 +342,7 @@ export default function ClarityTool() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `clarity-ai-${selectedMode.id}.md`;
+    a.download = `tidify-ai-${selectedMode.id}.md`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -380,7 +380,7 @@ export default function ClarityTool() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `clarity-ai-${selectedMode.id}.docx`;
+    a.download = `tidify-ai-${selectedMode.id}.docx`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -415,7 +415,7 @@ export default function ClarityTool() {
       y += lineHeight;
     }
 
-    doc.save(`clarity-ai-${selectedMode.id}.pdf`);
+    doc.save(`tidify-ai-${selectedMode.id}.pdf`);
   }
 
   async function handleCheckout() {

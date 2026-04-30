@@ -2,7 +2,7 @@ import StaticPageLayout from "../components/StaticPageLayout";
 import { ARTICLES } from "./articles";
 import Link from "next/link";
 
-export const metadata = { title: "Blog — Clarity AI" };
+export const metadata = { title: "Blog — Tidify AI" };
 
 export default function BlogPage() {
   return (

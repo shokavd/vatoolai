@@ -21,7 +21,7 @@ export default function ContactPage() {
           name,
           email,
           message,
-          subject: `Clarity AI — ${name}`,
+          subject: `Tidify AI — ${name}`,
         }),
       });
       const data = await res.json();

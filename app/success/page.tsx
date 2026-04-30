@@ -21,8 +21,8 @@ function SuccessContent() {
       .then((res) => res.json())
       .then(async (data) => {
         if (data.customerId) {
-          localStorage.setItem("clarity_ai_pro", "true");
-          localStorage.setItem("clarity_ai_customer_id", data.customerId);
+          localStorage.setItem("tidify_ai_pro", "true");
+          localStorage.setItem("tidify_ai_customer_id", data.customerId);
           await refreshProStatus();
           setStatus("success");
         } else {
@@ -91,7 +91,7 @@ function SuccessContent() {
         href="/#tool"
         className="inline-block bg-teal-500 text-slate-950 font-semibold px-8 py-3 rounded-xl hover:bg-teal-400 transition-colors"
       >
-        Start using Clarity AI →
+        Start using Tidify AI →
       </a>
     </div>
   );
@@ -103,7 +103,7 @@ export default function SuccessPage() {
       <div className="max-w-md w-full">
         <div className="text-center mb-10">
           <span className="text-xl font-bold bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-            Clarity AI
+            Tidify AI
           </span>
         </div>
         <Suspense fallback={

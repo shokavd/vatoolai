@@ -1,6 +1,6 @@
 import StaticPageLayout from "../components/StaticPageLayout";
 
-export const metadata = { title: "Privacy Policy — Clarity AI" };
+export const metadata = { title: "Privacy Policy — Tidify AI" };
 
 export default function PrivacyPage() {
   return (
@@ -11,7 +11,7 @@ export default function PrivacyPage() {
     >
       <h2>Who we are</h2>
       <p>
-        Clarity AI is operated by Shoka van Dooren, registered in the Netherlands (KvK registration in progress).
+        Tidify AI is operated by Shoka van Dooren, registered in the Netherlands (KvK registration in progress).
         For all privacy-related requests, please use our <a href="/contact">contact form</a>.
       </p>
 
@@ -32,11 +32,11 @@ export default function PrivacyPage() {
         We store a small amount of data locally in your browser. This data never leaves your device and is never sent to our servers:
       </p>
       <ul>
-        <li><strong>clarity_ai_locale</strong> — your preferred language</li>
-        <li><strong>clarity_ai_pro</strong> — whether you have an active Pro subscription</li>
-        <li><strong>clarity_ai_usage_[date]</strong> — daily usage count for the free tier</li>
-        <li><strong>clarity_ai_history</strong> — your last 5 (free) or 20 (Pro) results</li>
-        <li><strong>clarity_ai_consent</strong> — your cookie consent preference</li>
+        <li><strong>tidify_ai_locale</strong> — your preferred language</li>
+        <li><strong>tidify_ai_pro</strong> — whether you have an active Pro subscription</li>
+        <li><strong>tidify_ai_usage_[date]</strong> — daily usage count for the free tier</li>
+        <li><strong>tidify_ai_history</strong> — your last 5 (free) or 20 (Pro) results</li>
+        <li><strong>tidify_ai_consent</strong> — your cookie consent preference</li>
       </ul>
 
       <h3>Payment data</h3>
@@ -89,7 +89,7 @@ export default function PrivacyPage() {
 
       <h2>Children</h2>
       <p>
-        Clarity AI is not directed at children under the age of 16. We do not knowingly collect data from minors.
+        Tidify AI is not directed at children under the age of 16. We do not knowingly collect data from minors.
       </p>
 
       <h2>Changes to this policy</h2>

@@ -1,6 +1,6 @@
 import StaticPageLayout from "../components/StaticPageLayout";
 
-export const metadata = { title: "Changelog — Clarity AI" };
+export const metadata = { title: "Changelog — Tidify AI" };
 
 const ENTRIES = [
   {
@@ -44,7 +44,7 @@ const ENTRIES = [
     date: "January 2026",
     version: "v1.0",
     changes: [
-      "Initial launch of Clarity AI",
+      "Initial launch of Tidify AI",
       "5 core modes: Meeting Notes, Brain Dump, Email Reply, Cover Letter, Text Cleanup",
       "Free tier: 3 uses per day, no account needed",
       "Powered by Claude AI (Anthropic)",

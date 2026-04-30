@@ -1,6 +1,6 @@
 import StaticPageLayout from "../components/StaticPageLayout";
 
-export const metadata = { title: "Roadmap — Clarity AI" };
+export const metadata = { title: "Roadmap — Tidify AI" };
 
 const IN_PROGRESS = [
   { emoji: "🔐", title: "Account system", desc: "Sign in with magic link. Pro status linked to your account — works across all your devices, not just the browser you paid in." },

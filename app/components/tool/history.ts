@@ -9,7 +9,7 @@ export type HistoryItem = {
   timestamp: number;
 };
 
-const HISTORY_KEY = "clarity_ai_history";
+const HISTORY_KEY = "tidify_ai_history";
 const MAX_FREE = 5;
 const MAX_PRO = 20;
 
