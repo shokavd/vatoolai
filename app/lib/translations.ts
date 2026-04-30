@@ -1,31 +1,31 @@
 export type Locale = "en" | "nl" | "es" | "fr" | "de" | "pt" | "it" | "pl" | "tr" | "ja" | "zh";
 
 const freeFeatures = {
-  en: ["3 uses per day", "15 modes", "All platforms (1 at a time)", "No account needed", "Copy to clipboard"],
-  nl: ["3 uses per dag", "15 modi", "Alle platforms (1 tegelijk)", "Geen account nodig", "Kopieer naar klembord"],
-  es: ["3 usos por día", "15 modos", "Todas las plataformas (1 a la vez)", "Sin cuenta", "Copiar al portapapeles"],
-  fr: ["3 utilisations par jour", "15 modes", "Toutes les plateformes (1 à la fois)", "Sans compte", "Copier dans le presse-papiers"],
-  de: ["3 Nutzungen pro Tag", "15 Modi", "Alle Plattformen (1 gleichzeitig)", "Kein Konto nötig", "In die Zwischenablage kopieren"],
-  pt: ["3 usos por dia", "15 modos", "Todas as plataformas (1 de cada vez)", "Sem conta necessária", "Copiar para área de transferência"],
-  it: ["3 utilizzi al giorno", "15 modi", "Tutte le piattaforme (1 alla volta)", "Nessun account necessario", "Copia negli appunti"],
-  pl: ["3 użycia dziennie", "15 trybów", "Wszystkie platformy (1 naraz)", "Bez konta", "Kopiuj do schowka"],
-  tr: ["Günde 3 kullanım", "15 mod", "Tüm platformlar (1 aynı anda)", "Hesap gerekmez", "Panoya kopyala"],
-  ja: ["1日3回", "15モード", "全プラットフォーム（1つずつ）", "アカウント不要", "クリップボードにコピー"],
-  zh: ["每天3次使用", "15种模式", "所有平台（每次1个）", "无需注册", "复制到剪贴板"],
+  en: ["3 uses per day", "15 modes", "1 file upload per day", "All platforms (1 at a time)", "No account needed", "Copy to clipboard"],
+  nl: ["3 uses per dag", "15 modi", "1 bestand uploaden per dag", "Alle platforms (1 tegelijk)", "Geen account nodig", "Kopieer naar klembord"],
+  es: ["3 usos por día", "15 modos", "1 archivo por día", "Todas las plataformas (1 a la vez)", "Sin cuenta", "Copiar al portapapeles"],
+  fr: ["3 utilisations par jour", "15 modes", "1 fichier par jour", "Toutes les plateformes (1 à la fois)", "Sans compte", "Copier dans le presse-papiers"],
+  de: ["3 Nutzungen pro Tag", "15 Modi", "1 Datei-Upload pro Tag", "Alle Plattformen (1 gleichzeitig)", "Kein Konto nötig", "In die Zwischenablage kopieren"],
+  pt: ["3 usos por dia", "15 modos", "1 upload por dia", "Todas as plataformas (1 de cada vez)", "Sem conta necessária", "Copiar para área de transferência"],
+  it: ["3 utilizzi al giorno", "15 modi", "1 file caricato al giorno", "Tutte le piattaforme (1 alla volta)", "Nessun account necessario", "Copia negli appunti"],
+  pl: ["3 użycia dziennie", "15 trybów", "1 plik dziennie", "Wszystkie platformy (1 naraz)", "Bez konta", "Kopiuj do schowka"],
+  tr: ["Günde 3 kullanım", "15 mod", "Günde 1 dosya yükleme", "Tüm platformlar (1 aynı anda)", "Hesap gerekmez", "Panoya kopyala"],
+  ja: ["1日3回", "15モード", "1日1回ファイルアップロード", "全プラットフォーム（1つずつ）", "アカウント不要", "クリップボードにコピー"],
+  zh: ["每天3次使用", "15种模式", "每天1次文件上传", "所有平台（每次1个）", "无需注册", "复制到剪贴板"],
 };
 
 const proFeatures = {
-  en: ["Unlimited uses", "All 20 modes", "Multiple platforms at once", "15,000 character input", "History (last 20 results)", "3 variations per request", "File upload (PDF, Word, Excel, images)", "PDF & Word export"],
-  nl: ["Onbeperkt gebruik", "Alle 20 modi", "Meerdere platforms tegelijk", "15.000 tekens invoer", "Geschiedenis (laatste 20)", "3 variaties per verzoek", "Bestanden uploaden (PDF, Word, Excel)", "PDF & Word export"],
-  es: ["Usos ilimitados", "Los 20 modos", "Múltiples plataformas a la vez", "15.000 caracteres de entrada", "Historial (últimos 20)", "3 variaciones por solicitud", "Subida de archivos (PDF, Word, Excel)", "Exportar PDF y Word"],
-  fr: ["Utilisations illimitées", "Les 20 modes", "Plusieurs plateformes à la fois", "15 000 caractères en entrée", "Historique (20 derniers résultats)", "3 variations par requête", "Import de fichiers (PDF, Word, Excel)", "Export PDF et Word"],
-  de: ["Unbegrenzte Nutzung", "Alle 20 Modi", "Mehrere Plattformen gleichzeitig", "15.000 Zeichen Eingabe", "Verlauf (letzte 20 Ergebnisse)", "3 Varianten pro Anfrage", "Datei-Upload (PDF, Word, Excel)", "PDF & Word Export"],
-  pt: ["Usos ilimitados", "Todos os 20 modos", "Várias plataformas ao mesmo tempo", "15.000 caracteres de entrada", "Histórico (últimos 20 resultados)", "3 variações por pedido", "Upload de ficheiros (PDF, Word, Excel)", "Exportar PDF e Word"],
-  it: ["Utilizzi illimitati", "Tutti i 20 modi", "Più piattaforme contemporaneamente", "15.000 caratteri di input", "Cronologia (ultimi 20 risultati)", "3 varianti per richiesta", "Caricamento file (PDF, Word, Excel)", "Esporta PDF e Word"],
-  pl: ["Nieograniczone użycia", "Wszystkie 20 trybów", "Wiele platform jednocześnie", "15 000 znaków wejściowych", "Historia (ostatnie 20 wyników)", "3 warianty na żądanie", "Przesyłanie plików (PDF, Word, Excel)", "Eksport PDF i Word"],
-  tr: ["Sınırsız kullanım", "Tüm 20 mod", "Aynı anda birden fazla platform", "15.000 karakter girişi", "Geçmiş (son 20 sonuç)", "İstek başına 3 varyasyon", "Dosya yükleme (PDF, Word, Excel)", "PDF ve Word dışa aktarma"],
-  ja: ["無制限使用", "全20モード", "複数プラットフォーム同時", "15,000文字入力", "履歴（最新20件）", "1リクエストあたり3パターン", "ファイルアップロード（PDF・Word・Excel）", "PDF・Wordエクスポート"],
-  zh: ["无限次使用", "全部20种模式", "同时选择多个平台", "15,000字符输入", "历史记录（最近20条）", "每次3个变体", "文件上传（PDF、Word、Excel）", "PDF和Word导出"],
+  en: ["Unlimited uses", "All 20 modes", "Multiple platforms at once", "15,000 character input", "Unlimited file uploads", "PDF, Word & Markdown export", "Refine outputs with follow-ups", "Brand voice profile", "History (last 20 results)", "3 variations per request"],
+  nl: ["Onbeperkt gebruik", "Alle 20 modi", "Meerdere platforms tegelijk", "15.000 tekens invoer", "Onbeperkt bestanden uploaden", "PDF, Word & Markdown export", "Output verfijnen met opvolging", "Merkstemprofiel", "Geschiedenis (laatste 20)", "3 variaties per verzoek"],
+  es: ["Usos ilimitados", "Los 20 modos", "Múltiples plataformas a la vez", "15.000 caracteres de entrada", "Subidas de archivos ilimitadas", "Exportar PDF, Word y Markdown", "Refinar resultados con seguimiento", "Perfil de voz de marca", "Historial (últimos 20)", "3 variaciones por solicitud"],
+  fr: ["Utilisations illimitées", "Les 20 modes", "Plusieurs plateformes à la fois", "15 000 caractères en entrée", "Import de fichiers illimité", "Export PDF, Word et Markdown", "Affiner les résultats avec des suivis", "Profil de voix de marque", "Historique (20 derniers résultats)", "3 variations par requête"],
+  de: ["Unbegrenzte Nutzung", "Alle 20 Modi", "Mehrere Plattformen gleichzeitig", "15.000 Zeichen Eingabe", "Unbegrenzter Datei-Upload", "PDF, Word & Markdown Export", "Ergebnisse mit Folgeanweisungen verfeinern", "Markenprofil", "Verlauf (letzte 20 Ergebnisse)", "3 Varianten pro Anfrage"],
+  pt: ["Usos ilimitados", "Todos os 20 modos", "Várias plataformas ao mesmo tempo", "15.000 caracteres de entrada", "Uploads ilimitados", "Exportar PDF, Word e Markdown", "Refinar resultados com seguimento", "Perfil de voz de marca", "Histórico (últimos 20 resultados)", "3 variações por pedido"],
+  it: ["Utilizzi illimitati", "Tutti i 20 modi", "Più piattaforme contemporaneamente", "15.000 caratteri di input", "Upload file illimitati", "Esporta PDF, Word e Markdown", "Perfeziona i risultati con follow-up", "Profilo brand voice", "Cronologia (ultimi 20 risultati)", "3 varianti per richiesta"],
+  pl: ["Nieograniczone użycia", "Wszystkie 20 trybów", "Wiele platform jednocześnie", "15 000 znaków wejściowych", "Nieograniczone przesyłanie plików", "Eksport PDF, Word i Markdown", "Ulepszanie wyników z follow-upami", "Profil głosu marki", "Historia (ostatnie 20 wyników)", "3 warianty na żądanie"],
+  tr: ["Sınırsız kullanım", "Tüm 20 mod", "Aynı anda birden fazla platform", "15.000 karakter girişi", "Sınırsız dosya yükleme", "PDF, Word ve Markdown dışa aktarma", "Takip talimatlarıyla çıktıları iyileştirme", "Marka ses profili", "Geçmiş (son 20 sonuç)", "İstek başına 3 varyasyon"],
+  ja: ["無制限使用", "全20モード", "複数プラットフォーム同時", "15,000文字入力", "無制限ファイルアップロード", "PDF・Word・Markdownエクスポート", "フォローアップで出力を改善", "ブランドボイスプロファイル", "履歴（最新20件）", "1リクエストあたり3パターン"],
+  zh: ["无限次使用", "全部20种模式", "同时选择多个平台", "15,000字符输入", "无限次文件上传", "PDF、Word和Markdown导出", "通过后续指令优化结果", "品牌声音档案", "历史记录（最近20条）", "每次3个变体"],
 };
 
 export const translations = {

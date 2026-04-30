@@ -10,6 +10,7 @@ import { useAuth } from "../lib/AuthContext";
 import BrandVoicePanel, { loadBrandVoice } from "./BrandVoicePanel";
 
 const FREE_LIMIT = 3;
+const FREE_UPLOAD_LIMIT = 1;
 const FREE_MAX_CHARS = 5000;
 const PRO_MAX_CHARS = 15000;
 
@@ -28,10 +29,27 @@ function incrementUsage(): number {
   return newCount;
 }
 
-function OutputBlock({ text, copyLabel, copiedLabel, onDownloadPdf, onDownloadDocx, onDownloadMd }: {
+function getUploadKey() {
+  return `clarity_ai_uploads_${new Date().toISOString().slice(0, 10)}`;
+}
+
+function getUploadCount(): number {
+  if (typeof window === "undefined") return 0;
+  return parseInt(localStorage.getItem(getUploadKey()) || "0", 10);
+}
+
+function incrementUploadCount(): number {
+  const newCount = getUploadCount() + 1;
+  localStorage.setItem(getUploadKey(), String(newCount));
+  return newCount;
+}
+
+function OutputBlock({ text, copyLabel, copiedLabel, proUser, onUpgrade, onDownloadPdf, onDownloadDocx, onDownloadMd }: {
   text: string;
   copyLabel: string;
   copiedLabel: string;
+  proUser: boolean;
+  onUpgrade: () => void;
   onDownloadPdf: () => void;
   onDownloadDocx: () => void;
   onDownloadMd: () => void;
@@ -62,31 +80,42 @@ function OutputBlock({ text, copyLabel, copiedLabel, onDownloadPdf, onDownloadDo
           )}
         </button>
 
-        <div className="relative">
+        {proUser ? (
+          <div className="relative">
+            <button
+              onClick={() => setShowExports(!showExports)}
+              className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+            >
+              <span>⬇️</span><span>Export</span><span>{showExports ? "▴" : "▾"}</span>
+            </button>
+            {showExports && (
+              <div className="absolute left-0 top-6 bg-slate-800 border border-white/10 rounded-xl shadow-xl z-10 min-w-[140px] overflow-hidden">
+                {[
+                  { label: "PDF (.pdf)", action: onDownloadPdf },
+                  { label: "Word (.docx)", action: onDownloadDocx },
+                  { label: "Markdown (.md)", action: onDownloadMd },
+                ].map(({ label, action }) => (
+                  <button
+                    key={label}
+                    onClick={() => { action(); setShowExports(false); }}
+                    className="w-full text-left px-4 py-2.5 text-xs text-slate-300 hover:bg-white/[0.08] transition-colors"
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
           <button
-            onClick={() => setShowExports(!showExports)}
-            className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+            onClick={onUpgrade}
+            className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-indigo-400 transition-colors"
           >
-            <span>⬇️</span><span>Export</span><span>{showExports ? "▴" : "▾"}</span>
+            <span>⬇️</span>
+            <span>Export</span>
+            <span className="text-[10px] bg-indigo-500/20 text-indigo-400 px-1 py-0.5 rounded ml-0.5">Pro</span>
           </button>
-          {showExports && (
-            <div className="absolute left-0 top-6 bg-slate-800 border border-white/10 rounded-xl shadow-xl z-10 min-w-[140px] overflow-hidden">
-              {[
-                { label: "PDF (.pdf)", action: onDownloadPdf },
-                { label: "Word (.docx)", action: onDownloadDocx },
-                { label: "Markdown (.md)", action: onDownloadMd },
-              ].map(({ label, action }) => (
-                <button
-                  key={label}
-                  onClick={() => { action(); setShowExports(false); }}
-                  className="w-full text-left px-4 py-2.5 text-xs text-slate-300 hover:bg-white/[0.08] transition-colors"
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
@@ -159,11 +188,13 @@ export default function ClarityTool() {
   // File upload state
   const [fileLoading, setFileLoading] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [uploadCount, setUploadCount] = useState(0);
 
   const proUser = isProUser;
 
   useEffect(() => {
     setUsageCount(getUsageCount());
+    setUploadCount(getUploadCount());
     setHistory(getHistory());
     const bv = loadBrandVoice();
     setBrandVoiceSet(Object.values(bv).some((v) => v.trim().length > 0));
@@ -277,6 +308,13 @@ export default function ClarityTool() {
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (!proUser && getUploadCount() >= FREE_UPLOAD_LIMIT) {
+      setError("You've used your 1 free upload today. Upgrade to Pro for unlimited file uploads.");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
     setFileLoading(true);
     setFileName(file.name);
     setError("");
@@ -287,6 +325,10 @@ export default function ClarityTool() {
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Could not read file."); return; }
       setInput(data.text.slice(0, maxChars));
+      if (!proUser) {
+        const newCount = incrementUploadCount();
+        setUploadCount(newCount);
+      }
     } catch {
       setError("Could not read file. Please try again.");
     } finally {
@@ -428,8 +470,18 @@ export default function ClarityTool() {
     setHistory([]);
   }
 
+  const uploadLimitReached = !proUser && uploadCount >= FREE_UPLOAD_LIMIT;
+
   return (
     <div className="w-full max-w-4xl mx-auto">
+      {/* Pro badge */}
+      {proUser && (
+        <div className="flex items-center gap-2.5 mb-5 px-4 py-2.5 bg-teal-500/10 border border-teal-500/20 rounded-xl">
+          <span className="text-teal-400 font-bold text-sm">✦ Pro</span>
+          <span className="text-slate-400 text-xs">Unlimited uses · All 20 modes · File upload · Exports · Brand voice · Refinement</span>
+        </div>
+      )}
+
       {/* Mode Selector */}
       <div className="flex flex-wrap gap-2 mb-4">
         {MODES.map((mode) => (
@@ -551,15 +603,18 @@ export default function ClarityTool() {
           </select>
         </div>
         <button
-          onClick={() => setShowBrandVoice(true)}
+          onClick={() => { if (!proUser) { handleCheckout(); return; } setShowBrandVoice(true); }}
           className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-all ${
-            brandVoiceSet
+            proUser && brandVoiceSet
               ? "border-teal-500/30 text-teal-400 bg-teal-500/10"
-              : "border-white/10 text-slate-500 hover:text-slate-300 hover:border-white/20"
+              : proUser
+              ? "border-white/10 text-slate-500 hover:text-slate-300 hover:border-white/20"
+              : "border-white/10 text-slate-600 hover:text-indigo-400 hover:border-indigo-400/30 cursor-pointer"
           }`}
         >
           <span>🎨</span>
-          <span>{brandVoiceSet ? "Brand voice on" : "Brand voice"}</span>
+          <span>{proUser && brandVoiceSet ? "Brand voice on" : "Brand voice"}</span>
+          {!proUser && <span className="text-[10px] bg-indigo-500/20 text-indigo-400 px-1 rounded">Pro</span>}
         </button>
       </div>
 
@@ -586,12 +641,12 @@ export default function ClarityTool() {
                 className="hidden"
               />
               <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 bg-white/[0.05] border border-white/10 rounded-lg px-2.5 py-1.5 transition-colors"
-                title="Upload .txt, .pdf, or .docx"
+                onClick={() => { if (uploadLimitReached) { setError("You've used your 1 free upload today. Upgrade to Pro for unlimited file uploads."); return; } fileInputRef.current?.click(); }}
+                className={`flex items-center gap-1 text-xs bg-white/[0.05] border border-white/10 rounded-lg px-2.5 py-1.5 transition-colors ${uploadLimitReached ? "text-slate-600 cursor-not-allowed" : "text-slate-500 hover:text-slate-300"}`}
+                title={uploadLimitReached ? "Upgrade to Pro for unlimited uploads" : "Upload file"}
               >
                 <span>📎</span>
-                <span>{fileName ? fileName.slice(0, 20) + (fileName.length > 20 ? "…" : "") : "Upload file"}</span>
+                <span>{fileName ? fileName.slice(0, 20) + (fileName.length > 20 ? "…" : "") : uploadLimitReached ? "Upload used (Pro for more)" : "Upload file"}</span>
               </button>
             </>
           )}
@@ -692,6 +747,8 @@ export default function ClarityTool() {
             text={outputVariations[activeVariation]}
             copyLabel={ui.copy}
             copiedLabel={ui.copied}
+            proUser={proUser}
+            onUpgrade={handleCheckout}
             onDownloadPdf={() => handleDownloadPdf(outputVariations[activeVariation])}
             onDownloadDocx={() => handleDownloadDocx(outputVariations[activeVariation])}
             onDownloadMd={() => handleDownloadMd(outputVariations[activeVariation])}
@@ -707,6 +764,8 @@ export default function ClarityTool() {
             text={output}
             copyLabel={ui.copy}
             copiedLabel={ui.copied}
+            proUser={proUser}
+            onUpgrade={handleCheckout}
             onDownloadPdf={() => handleDownloadPdf(output)}
             onDownloadDocx={() => handleDownloadDocx(output)}
             onDownloadMd={() => handleDownloadMd(output)}
@@ -714,32 +773,47 @@ export default function ClarityTool() {
         </div>
       )}
 
-      {/* Refinement box — shown after any output */}
+      {/* Refinement box — Pro only */}
       {currentOutput && (
-        <div className="mt-4 p-4 bg-white/[0.03] border border-white/8 rounded-xl">
-          <p className="text-xs font-medium text-slate-400 mb-2">Refine this output</p>
-          <div className="flex gap-2">
-            <input
-              value={refinementInput}
-              onChange={(e) => setRefinementInput(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleRefine(); } }}
-              placeholder='e.g. "Make it shorter", "Add a section about pricing", "More formal tone"'
-              className="flex-1 bg-white/[0.04] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+        proUser ? (
+          <div className="mt-4 p-4 bg-white/[0.03] border border-white/8 rounded-xl">
+            <p className="text-xs font-medium text-slate-400 mb-2">Refine this output</p>
+            <div className="flex gap-2">
+              <input
+                value={refinementInput}
+                onChange={(e) => setRefinementInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleRefine(); } }}
+                placeholder='e.g. "Make it shorter", "Add a section about pricing", "More formal tone"'
+                className="flex-1 bg-white/[0.04] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <button
+                onClick={handleRefine}
+                disabled={refining || !refinementInput.trim()}
+                className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-500 disabled:opacity-50 transition-colors"
+              >
+                {refining ? (
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                ) : "Refine →"}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4 p-4 bg-white/[0.03] border border-white/8 rounded-xl flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-medium text-slate-400">Refine this output</p>
+              <p className="text-xs text-slate-600 mt-0.5">Iterate with follow-up instructions — Pro feature</p>
+            </div>
             <button
-              onClick={handleRefine}
-              disabled={refining || !refinementInput.trim()}
-              className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-500 disabled:opacity-50 transition-colors"
+              onClick={handleCheckout}
+              className="shrink-0 text-xs bg-indigo-600 text-white font-medium px-3 py-1.5 rounded-lg hover:bg-indigo-500 transition-colors"
             >
-              {refining ? (
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-              ) : "Refine →"}
+              Upgrade to Pro →
             </button>
           </div>
-        </div>
+        )
       )}
 
       {/* Sign-in prompt before checkout */}
