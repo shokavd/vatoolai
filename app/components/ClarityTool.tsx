@@ -28,24 +28,29 @@ function incrementUsage(): number {
   return newCount;
 }
 
-function OutputBlock({ text, copyLabel, copiedLabel, onDownloadPdf }: {
+function OutputBlock({ text, copyLabel, copiedLabel, onDownloadPdf, onDownloadDocx, onDownloadMd }: {
   text: string;
   copyLabel: string;
   copiedLabel: string;
   onDownloadPdf: () => void;
+  onDownloadDocx: () => void;
+  onDownloadMd: () => void;
 }) {
   const [copied, setCopied] = useState(false);
+  const [showExports, setShowExports] = useState(false);
+
   async function handleCopy() {
     await navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
+
   return (
     <div className="mb-4">
       <div className="bg-slate-900/80 border border-white/10 rounded-xl p-5 prose prose-invert prose-sm max-w-none text-slate-200 [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-white/20 [&_th]:bg-slate-800 [&_th]:p-2 [&_th]:text-left [&_td]:border [&_td]:border-white/15 [&_td]:p-2 [&_a]:text-teal-400 [&_code]:bg-slate-800 [&_code]:px-1 [&_code]:rounded">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
       </div>
-      <div className="mt-2 flex items-center gap-4">
+      <div className="mt-2 flex items-center gap-4 flex-wrap">
         <button
           onClick={handleCopy}
           className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
@@ -56,12 +61,32 @@ function OutputBlock({ text, copyLabel, copiedLabel, onDownloadPdf }: {
             <><span>📋</span><span>{copyLabel}</span></>
           )}
         </button>
-        <button
-          onClick={onDownloadPdf}
-          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
-        >
-          <span>⬇️</span><span>Download PDF</span>
-        </button>
+
+        <div className="relative">
+          <button
+            onClick={() => setShowExports(!showExports)}
+            className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+          >
+            <span>⬇️</span><span>Export</span><span>{showExports ? "▴" : "▾"}</span>
+          </button>
+          {showExports && (
+            <div className="absolute left-0 top-6 bg-slate-800 border border-white/10 rounded-xl shadow-xl z-10 min-w-[140px] overflow-hidden">
+              {[
+                { label: "PDF (.pdf)", action: onDownloadPdf },
+                { label: "Word (.docx)", action: onDownloadDocx },
+                { label: "Markdown (.md)", action: onDownloadMd },
+              ].map(({ label, action }) => (
+                <button
+                  key={label}
+                  onClick={() => { action(); setShowExports(false); }}
+                  className="w-full text-left px-4 py-2.5 text-xs text-slate-300 hover:bg-white/[0.08] transition-colors"
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -268,6 +293,54 @@ export default function ClarityTool() {
       setFileLoading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
+  }
+
+  function handleDownloadMd(text: string) {
+    const blob = new Blob([text], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `clarity-ai-${selectedMode.id}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function handleDownloadDocx(text: string) {
+    const { Document, Packer, Paragraph, TextRun, HeadingLevel } = await import("docx");
+
+    const lines = text.split("\n");
+    const children = [];
+
+    for (const line of lines) {
+      if (line.startsWith("## ")) {
+        children.push(new Paragraph({ text: line.slice(3), heading: HeadingLevel.HEADING_2 }));
+      } else if (line.startsWith("# ")) {
+        children.push(new Paragraph({ text: line.slice(2), heading: HeadingLevel.HEADING_1 }));
+      } else if (line.startsWith("### ")) {
+        children.push(new Paragraph({ text: line.slice(4), heading: HeadingLevel.HEADING_3 }));
+      } else if (line.startsWith("- ") || line.startsWith("• ")) {
+        children.push(new Paragraph({ text: line.slice(2), bullet: { level: 0 } }));
+      } else if (/^\d+\. /.test(line)) {
+        children.push(new Paragraph({ text: line.replace(/^\d+\. /, "") }));
+      } else if (line.trim() === "") {
+        children.push(new Paragraph({ text: "" }));
+      } else {
+        const parts = line.split(/\*\*(.+?)\*\*/);
+        const runs = parts.map((part, i) =>
+          new TextRun({ text: part, bold: i % 2 === 1 })
+        );
+        children.push(new Paragraph({ children: runs }));
+      }
+    }
+
+    const doc = new Document({ sections: [{ children }] });
+    const blob = await Packer.toBlob(doc);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `clarity-ai-${selectedMode.id}.docx`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   async function handleDownloadPdf(text: string) {
@@ -508,7 +581,7 @@ export default function ClarityTool() {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".txt,.pdf,.docx"
+                accept=".txt,.md,.pdf,.docx,.csv,.xlsx,.xls,.jpg,.jpeg,.png,.webp"
                 onChange={handleFileUpload}
                 className="hidden"
               />
@@ -620,6 +693,8 @@ export default function ClarityTool() {
             copyLabel={ui.copy}
             copiedLabel={ui.copied}
             onDownloadPdf={() => handleDownloadPdf(outputVariations[activeVariation])}
+            onDownloadDocx={() => handleDownloadDocx(outputVariations[activeVariation])}
+            onDownloadMd={() => handleDownloadMd(outputVariations[activeVariation])}
           />
         </div>
       )}
@@ -633,6 +708,8 @@ export default function ClarityTool() {
             copyLabel={ui.copy}
             copiedLabel={ui.copied}
             onDownloadPdf={() => handleDownloadPdf(output)}
+            onDownloadDocx={() => handleDownloadDocx(output)}
+            onDownloadMd={() => handleDownloadMd(output)}
           />
         </div>
       )}
