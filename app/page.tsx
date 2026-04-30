@@ -163,9 +163,7 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl font-bold mb-3">{t.testimonialSubmit.title}</h2>
           <p className="text-slate-400 mb-8">{t.testimonialSubmit.sub}</p>
           <a
-            href="https://g.page/r/tidify-ai-review"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/contact"
             className="inline-block bg-amber-400 text-slate-950 font-bold px-8 py-3 rounded-xl hover:bg-amber-300 transition-all shadow-lg shadow-amber-400/20"
           >
             {t.testimonialSubmit.cta}

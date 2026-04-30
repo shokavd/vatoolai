@@ -322,7 +322,7 @@ export async function POST(req: NextRequest) {
     if (refinement && previousOutput) {
       const message = await client.messages.create({
         model: "claude-sonnet-4-6",
-        max_tokens: 2000,
+        max_tokens: 4096,
         system: systemPrompt,
         messages: [
           { role: "user", content: input },
@@ -338,19 +338,19 @@ export async function POST(req: NextRequest) {
       const [v1, v2, v3] = await Promise.all([
         client.messages.create({
           model: "claude-sonnet-4-6",
-          max_tokens: 2000,
+          max_tokens: 4096,
           system: systemPrompt + "\n\nThis is Variation 1. Be slightly more concise than usual.",
           messages: [{ role: "user", content: input }],
         }),
         client.messages.create({
           model: "claude-sonnet-4-6",
-          max_tokens: 2000,
+          max_tokens: 4096,
           system: systemPrompt + "\n\nThis is Variation 2. Take a slightly different angle or structure than you normally would.",
           messages: [{ role: "user", content: input }],
         }),
         client.messages.create({
           model: "claude-sonnet-4-6",
-          max_tokens: 2000,
+          max_tokens: 4096,
           system: systemPrompt + "\n\nThis is Variation 3. Be slightly more detailed and thorough than usual.",
           messages: [{ role: "user", content: input }],
         }),
@@ -367,7 +367,7 @@ export async function POST(req: NextRequest) {
 
     const message = await client.messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 2000,
+      max_tokens: 4096,
       system: systemPrompt,
       messages: [{ role: "user", content: input }],
     });
