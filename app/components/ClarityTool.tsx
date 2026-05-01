@@ -7,7 +7,15 @@ import { MODES, TONES, LANGUAGES, PLATFORMS } from "./tool/modes";
 import { getHistory, saveToHistory, clearHistory, formatTimeAgo, type HistoryItem } from "./tool/history";
 import { useTranslation } from "../lib/TranslationContext";
 import { useAuth } from "../lib/AuthContext";
+import { supabase } from "../lib/supabase";
 import BrandVoicePanel, { loadBrandVoice } from "./BrandVoicePanel";
+
+async function getAuthHeader(): Promise<Record<string, string>> {
+  if (!supabase) return {};
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 const FREE_LIMIT = 3;
 const FREE_UPLOAD_LIMIT = 1;
@@ -220,9 +228,10 @@ export default function ClarityTool() {
 
     try {
       const brandVoice = loadBrandVoice();
+      const authHeader = await getAuthHeader();
       const res = await fetch("/api/process", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({
           input: input.trim(),
           mode: selectedMode.id,
@@ -230,7 +239,6 @@ export default function ClarityTool() {
           language,
           customInstruction: customInstruction.trim(),
           variations: generateVariations,
-          isPro: proUser,
           platforms: selectedMode.id === "social_media" ? selectedPlatforms : undefined,
           brandVoice: Object.values(brandVoice).some((v) => v.trim()) ? brandVoice : undefined,
         }),
@@ -270,16 +278,16 @@ export default function ClarityTool() {
 
     try {
       const brandVoice = loadBrandVoice();
+      const authHeader = await getAuthHeader();
       const res = await fetch("/api/process", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({
           input: input.trim(),
           mode: selectedMode.id,
           tone,
           language,
           customInstruction: customInstruction.trim(),
-          isPro: proUser,
           platforms: selectedMode.id === "social_media" ? selectedPlatforms : undefined,
           previousOutput: currentOutput,
           refinement: refinementInput.trim(),

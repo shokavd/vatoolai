@@ -1,10 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { createClient } from "@supabase/supabase-js";
 
 const client = new Anthropic();
 
 const FREE_MAX_CHARS = 5000;
 const PRO_MAX_CHARS = 30000;
+
+const PRO_ONLY_MODES = new Set(["cold_email", "press_release", "blog_outline", "interview_prep", "custom"]);
+
+async function getIsProFromRequest(req: NextRequest): Promise<boolean> {
+  try {
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader?.startsWith("Bearer ")) return false;
+    const token = authHeader.slice(7);
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !serviceKey) return false;
+    const admin = createClient(supabaseUrl, serviceKey);
+    const { data: { user } } = await admin.auth.getUser(token);
+    if (!user) return false;
+    const { data: profile } = await admin.from("profiles").select("is_pro").eq("id", user.id).single();
+    return profile?.is_pro === true;
+  } catch {
+    return false;
+  }
+}
 
 const modePrompts: Record<string, string> = {
   meeting_notes: `You receive raw meeting notes. Structure them clearly using markdown:
@@ -298,7 +319,9 @@ function buildSystemPrompt(
 
 export async function POST(req: NextRequest) {
   try {
-    const { input, mode, tone, language, customInstruction, variations, isPro, platforms, refinement, previousOutput, brandVoice } = await req.json();
+    const { input, mode, tone, language, customInstruction, variations, platforms, refinement, previousOutput, brandVoice } = await req.json();
+
+    const isPro = await getIsProFromRequest(req);
 
     if (!input || typeof input !== "string" || input.trim().length === 0) {
       return NextResponse.json({ error: "Input is required." }, { status: 400 });
@@ -314,6 +337,10 @@ export async function POST(req: NextRequest) {
 
     if (mode !== "custom" && !modePrompts[mode]) {
       return NextResponse.json({ error: "Invalid mode." }, { status: 400 });
+    }
+
+    if (PRO_ONLY_MODES.has(mode) && !isPro) {
+      return NextResponse.json({ error: "This mode requires a Pro subscription." }, { status: 403 });
     }
 
     const systemPrompt = buildSystemPrompt(mode, tone, language, customInstruction, platforms, brandVoice);

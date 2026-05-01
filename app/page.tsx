@@ -156,6 +156,15 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Tool */}
+      <section id="tool" className="py-24 px-4 sm:px-6 bg-white/[0.02] border-y border-white/5">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-3">{t.tool.title}</h2>
+          <p className="text-center text-slate-400 mb-10 text-lg">{t.tool.sub}</p>
+          <ClarityTool />
+        </div>
+      </section>
+
       {/* Share your experience */}
       <section className="py-16 px-4 sm:px-6 bg-white/[0.02] border-y border-white/5">
         <div className="max-w-2xl mx-auto text-center">
@@ -168,15 +177,6 @@ export default function Home() {
           >
             {t.testimonialSubmit.cta}
           </a>
-        </div>
-      </section>
-
-      {/* Tool */}
-      <section id="tool" className="py-24 px-4 sm:px-6 bg-white/[0.02] border-y border-white/5">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-3">{t.tool.title}</h2>
-          <p className="text-center text-slate-400 mb-10 text-lg">{t.tool.sub}</p>
-          <ClarityTool />
         </div>
       </section>
 
