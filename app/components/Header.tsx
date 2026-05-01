@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "../lib/TranslationContext";
 import { useAuth } from "../lib/AuthContext";
 import { type Locale } from "../lib/translations";
@@ -24,12 +24,26 @@ export default function Header() {
   const { t, locale, setLocale } = useTranslation();
   const { user, isProUser } = useAuth();
   const [showAuth, setShowAuth] = useState(false);
+  const [showLangMenu, setShowLangMenu] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handler = () => setShowAuth(true);
     document.addEventListener("open-auth-modal", handler);
     return () => document.removeEventListener("open-auth-modal", handler);
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setShowLangMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const currentLocale = LOCALES.find((l) => l.id === locale) || LOCALES[0];
 
   return (
     <>
@@ -49,22 +63,34 @@ export default function Header() {
               {t.nav.pricing}
             </a>
 
-            {/* Language switcher */}
-            <div className="flex items-center gap-0.5 bg-white/5 rounded-lg p-1 border border-white/8">
-              {LOCALES.map((loc) => (
-                <button
-                  key={loc.id}
-                  onClick={() => setLocale(loc.id)}
-                  title={loc.flag}
-                  className={`px-2 py-1 rounded text-xs font-medium transition-all ${
-                    locale === loc.id
-                      ? "bg-teal-500 text-slate-950 font-bold"
-                      : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  {loc.label}
-                </button>
-              ))}
+            {/* Language switcher — compact dropdown */}
+            <div ref={langRef} className="relative">
+              <button
+                onClick={() => setShowLangMenu(!showLangMenu)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/8 text-xs font-medium text-slate-300 hover:text-white transition-colors"
+              >
+                <span>{currentLocale.flag}</span>
+                <span className="hidden sm:inline">{currentLocale.label}</span>
+                <span className="text-slate-500 text-[10px] ml-0.5">▾</span>
+              </button>
+              {showLangMenu && (
+                <div className="absolute right-0 top-full mt-1.5 bg-slate-900 border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden py-1 min-w-[130px]">
+                  {LOCALES.map((loc) => (
+                    <button
+                      key={loc.id}
+                      onClick={() => { setLocale(loc.id); setShowLangMenu(false); }}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs transition-colors ${
+                        locale === loc.id
+                          ? "text-teal-400 bg-teal-500/10 font-medium"
+                          : "text-slate-300 hover:bg-white/[0.06] hover:text-white"
+                      }`}
+                    >
+                      <span>{loc.flag}</span>
+                      <span>{loc.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Auth button */}

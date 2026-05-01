@@ -490,14 +490,14 @@ export default function ClarityTool() {
         </div>
       )}
 
-      {/* Mode Selector */}
-      <div className="flex flex-wrap gap-2 mb-4">
+      {/* Mode Selector — scrollable on mobile, wrapping on desktop */}
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-1 sm:flex-wrap [&::-webkit-scrollbar]:hidden">
         {MODES.map((mode) => (
           <button
             key={mode.id}
             onClick={() => handleModeChange(mode)}
             title={mode.proOnly && !proUser ? ui.proOnly : undefined}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+            className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
               selectedMode.id === mode.id
                 ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/20"
                 : mode.proOnly && !proUser
@@ -692,7 +692,7 @@ export default function ClarityTool() {
           <span>{generateVariations ? "✓" : "+"}</span>
           <span>{ui.generateVariations.replace(" →", "")}</span>
         </button>
-        <span className="text-xs text-slate-500">{ui.variationsHint}</span>
+        <span className="hidden sm:inline text-xs text-slate-500">{ui.variationsHint}</span>
       </div>
 
       {/* Action or Upgrade */}
