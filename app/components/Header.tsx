@@ -96,7 +96,7 @@ export default function Header() {
             {/* Auth button */}
             <button
               onClick={() => setShowAuth(true)}
-              className={`hidden sm:flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border transition-all ${
+              className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border transition-all ${
                 user
                   ? "border-teal-500/30 text-teal-400 hover:bg-teal-500/10"
                   : "border-white/10 text-slate-400 hover:text-white hover:border-white/20"

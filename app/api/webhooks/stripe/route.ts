@@ -60,9 +60,23 @@ export async function POST(req: NextRequest) {
           await supabase.from("profiles")
             .update({ stripe_customer_id: customerId, is_pro: true })
             .eq("id", profile.id);
+        } else {
+          // No profile exists — create auth user so they can sign in later via magic link
+          const { data: authData, error: createError } = await supabase.auth.admin.createUser({
+            email,
+            email_confirm: true,
+          });
+          if (!createError && authData.user) {
+            await supabase.from("profiles").upsert({
+              id: authData.user.id,
+              email,
+              stripe_customer_id: customerId,
+              is_pro: true,
+            });
+          } else {
+            console.error("Could not create auth user for paid customer:", email, createError?.message);
+          }
         }
-        // If no profile found, they'll get Pro via localStorage on the success page
-        // and can sign in later with the same email to sync
       }
     }
   }
