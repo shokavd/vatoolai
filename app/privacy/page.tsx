@@ -1,6 +1,6 @@
 import StaticPageLayout from "../components/StaticPageLayout";
 
-export const metadata = { title: "Privacy Policy — Tidify AI" };
+export const metadata = { title: "Privacy Policy — Tidify AI", alternates: { canonical: "https://tidifyai.com/privacy" } };
 
 export default function PrivacyPage() {
   return (

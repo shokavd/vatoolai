@@ -19,6 +19,7 @@ export async function generateMetadata({
   return {
     title: `${article.title} — Tidify AI Blog`,
     description: article.excerpt,
+    alternates: { canonical: `https://tidifyai.com/blog/${slug}` },
   };
 }
 

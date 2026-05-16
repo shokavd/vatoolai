@@ -22,7 +22,6 @@ export const metadata: Metadata = {
   keywords: ["AI writing tool", "text cleanup", "meeting notes AI", "cover letter generator", "email reply AI", "social media content"],
   authors: [{ name: "Tidify AI", url: "https://tidifyai.com" }],
   metadataBase: new URL("https://tidifyai.com"),
-  alternates: { canonical: "/" },
   openGraph: {
     title: "Tidify AI — Turn Chaos Into Clarity",
     description: "Paste any messy text. Get back something useful. 20 AI-powered writing modes for professionals.",
