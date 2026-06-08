@@ -50,6 +50,9 @@ export const metadata: Metadata = {
     ],
     apple: "/icon.png",
   },
+  alternates: {
+    canonical: "https://www.tidifyai.com",
+  },
   robots: {
     index: true,
     follow: true,
