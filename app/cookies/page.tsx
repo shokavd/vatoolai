@@ -1,6 +1,6 @@
 import StaticPageLayout from "../components/StaticPageLayout";
 
-export const metadata = { title: "Cookie Policy — Tidify AI" };
+export const metadata = { title: "Cookie Policy — Tidify AI", alternates: { canonical: "https://tidifyai.com/cookies" } };
 
 export default function CookiesPage() {
   return (

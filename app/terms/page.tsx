@@ -1,6 +1,6 @@
 import StaticPageLayout from "../components/StaticPageLayout";
 
-export const metadata = { title: "Terms of Service — Tidify AI", alternates: { canonical: "https://www.tidifyai.com/terms" } };
+export const metadata = { title: "Terms of Service — Tidify AI", alternates: { canonical: "https://tidifyai.com/terms" } };
 
 export default function TermsPage() {
   return (

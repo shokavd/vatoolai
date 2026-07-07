@@ -1,6 +1,6 @@
 import StaticPageLayout from "../components/StaticPageLayout";
 
-export const metadata = { title: "Changelog — Tidify AI", alternates: { canonical: "https://www.tidifyai.com/changelog" } };
+export const metadata = { title: "Changelog — Tidify AI", alternates: { canonical: "https://tidifyai.com/changelog" } };
 
 const ENTRIES = [
   {

@@ -1,6 +1,6 @@
 import StaticPageLayout from "../components/StaticPageLayout";
 
-export const metadata = { title: "Help Center — Tidify AI", alternates: { canonical: "https://www.tidifyai.com/help" } };
+export const metadata = { title: "Help Center — Tidify AI", alternates: { canonical: "https://tidifyai.com/help" } };
 
 const FAQ = [
   { q: "Is Tidify AI really free?", a: "Yes — 3 uses per day, forever. No credit card or account needed. Just paste your text and go." },

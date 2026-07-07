@@ -2,7 +2,7 @@ import StaticPageLayout from "../components/StaticPageLayout";
 import { ARTICLES } from "./articles";
 import Link from "next/link";
 
-export const metadata = { title: "Blog — Tidify AI", alternates: { canonical: "https://www.tidifyai.com/blog" } };
+export const metadata = { title: "Blog — Tidify AI", alternates: { canonical: "https://tidifyai.com/blog" } };
 
 export default function BlogPage() {
   return (
