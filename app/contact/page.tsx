@@ -4,7 +4,7 @@ import ContactContent from "./ContactContent";
 export const metadata: Metadata = {
   title: "Contact — Tidify AI",
   alternates: {
-    canonical: "https://tidifyai.com/contact",
+    canonical: "https://www.tidifyai.com/contact",
   },
 };
 

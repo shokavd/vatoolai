@@ -3,7 +3,7 @@ import HomeContent from "./HomeContent";
 
 export const metadata: Metadata = {
   alternates: {
-    canonical: "https://tidifyai.com",
+    canonical: "https://www.tidifyai.com",
   },
 };
 

@@ -20,12 +20,12 @@ export const metadata: Metadata = {
   title: "Tidify AI — Turn Chaos Into Clarity",
   description: "Tidify AI turns messy text into structured, actionable output in seconds. 20 AI writing modes — meeting notes, emails, cover letters, social posts, and more. Free to start.",
   keywords: ["AI writing tool", "text cleanup", "meeting notes AI", "cover letter generator", "email reply AI", "social media content"],
-  authors: [{ name: "Tidify AI", url: "https://tidifyai.com" }],
-  metadataBase: new URL("https://tidifyai.com"),
+  authors: [{ name: "Tidify AI", url: "https://www.tidifyai.com" }],
+  metadataBase: new URL("https://www.tidifyai.com"),
   openGraph: {
     title: "Tidify AI — Turn Chaos Into Clarity",
     description: "Paste any messy text. Get back something useful. 20 AI-powered writing modes for professionals.",
-    url: "https://tidifyai.com",
+    url: "https://www.tidifyai.com",
     siteName: "Tidify AI",
     images: [
       {
